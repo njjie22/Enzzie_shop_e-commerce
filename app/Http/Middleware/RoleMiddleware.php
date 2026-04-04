@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class RoleMiddleware
+{
+    public function handle(Request $request, Closure $next, $role)
+{
+    if (!Auth::check()) {
+        return redirect()->route('login');
+    }
+
+    $user = $request->user();
+
+    // Jika super admin, boleh masuk semua admin route
+    if ($user->is_super_admin) {
+        return $next($request);
+    }
+
+    if ($user->role !== $role) {
+        abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+    }
+
+    return $next($request);
+}
+}
