@@ -15,59 +15,222 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #888; }
+
+        /* ── SIDEBAR ── */
+        #sidebar {
+            width: 240px;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            background: #1e1e1e;
+            border-right: 1px solid #2e2e38;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            z-index: 100;
+            transition: transform 0.3s ease, width 0.3s ease;
+            overflow: hidden;
+        }
+
+        /* Tablet: icon-only */
+        @media (max-width: 900px) and (min-width: 769px) {
+            #sidebar { width: 60px; }
+            .sidebar-label { display: none !important; }
+            .sidebar-brand { display: none !important; }
+        }
+
+        /* Mobile: off-canvas overlay */
+        @media (max-width: 768px) {
+            #sidebar {
+                position: fixed;
+                left: 0; top: 0;
+                width: 220px;
+                z-index: 300;
+                transform: translateX(-100%);
+                box-shadow: 4px 0 24px rgba(0,0,0,0.6);
+            }
+            #sidebar.open { transform: translateX(0); }
+        }
+
+        /* Sidebar hamburger: hide on mobile */
+        .sidebar-hamburger { display: flex; }
+        @media (max-width: 768px) {
+            .sidebar-hamburger { display: none; }
+        }
+
+        /* Topbar hamburger + title: mobile only */
+        #topbarHamburgerBtn { display: none; }
+        .topbar-brand { display: none; }
+        @media (max-width: 768px) {
+            #topbarHamburgerBtn { display: flex; }
+            .topbar-brand { display: block; }
+        }
+
+        /* ── DETAIL PANEL ── */
+        #detailPanel {
+            width: 0;
+            background: #242424;
+            border-left: 1px solid #3a3a3a;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            transition: width 0.3s ease;
+        }
+        #detailPanel.open { width: 310px; }
+
+        /* Mobile: detail panel becomes a full overlay from right */
+        @media (max-width: 700px) {
+            #detailPanel {
+                position: fixed;
+                right: 0; top: 0; bottom: 0;
+                width: 0;
+                z-index: 200;
+                box-shadow: -8px 0 32px rgba(0,0,0,0.7);
+            }
+            #detailPanel.open {
+                width: min(320px, 95vw);
+            }
+        }
+
+        /* ── TOPBAR (mobile only) ── */
+        #topbar {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 0 16px;
+            height: 52px;
+            background: #1e1e1e;
+            border-bottom: 1px solid #3a3a3a;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        @media (max-width: 768px) {
+            #topbar { display: flex; }
+        }
+
+        /* ── TABLE: hide some columns on small screens ── */
+        @media (max-width: 640px) {
+            .col-hide-sm { display: none; }
+            /* Make status select more compact */
+            .status-select { font-size: 0.7rem !important; padding: 3px 22px 3px 6px !important; }
+        }
+
+        /* ── SEARCH BAR: stack on very small ── */
+        @media (max-width: 480px) {
+            #searchBar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            #searchBar .search-inner {
+                min-width: unset;
+                width: 100%;
+            }
+            #searchBar button { width: 100%; }
+        }
+
+        /* Detail panel overlay backdrop (mobile) */
+        #detailOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 199;
+        }
+        @media (max-width: 700px) {
+            #detailOverlay.show { display: block; }
+        }
     </style>
 </head>
 <body class="bg-[#111] text-[#f0f0f0] font-['DM_Sans'] min-h-screen flex overflow-x-hidden">
 
-    <!-- SIDEBAR -->
-    <aside id="sidebar" class="w-[240px] max-[900px]:w-[60px] h-screen sticky top-0 bg-[#1e1e1e] border-r border-[#2e2e38] flex flex-col shrink-0 z-[100] transition-all duration-300 max-[768px]:fixed max-[768px]:-left-full max-[768px]:w-[200px] [&.open]:left-0 overflow-hidden">
-        <div class="flex items-center gap-2.5 px-3.5 py-4 border-b border-[#3a3a3a]">
-            <div class="flex flex-col gap-1 cursor-pointer p-1 rounded hover:bg-[#2e2e2e] transition-colors shrink-0">
+    <!-- SIDEBAR OVERLAY (mobile) -->
+    <div id="sidebarOverlay"
+         class="fixed inset-0 bg-black/50 z-[290] hidden"
+         onclick="closeSidebar()"></div>
+
+    <!-- DETAIL PANEL OVERLAY (mobile) -->
+    <div id="detailOverlay" onclick="closeDetail()"></div>
+
+    <!-- ── SIDEBAR ── -->
+    <aside id="sidebar">
+        <div class="flex items-center gap-2.5 px-3.5 py-4 border-b border-[#3a3a3a] flex-shrink-0">
+            <div class="sidebar-hamburger flex-col gap-1 cursor-pointer p-1 rounded hover:bg-[#2e2e2e] transition-colors shrink-0"
+                 onclick="toggleSidebar()">
                 <span class="block w-4 h-0.5 bg-[#cccccc] rounded-sm"></span>
                 <span class="block w-4 h-0.5 bg-[#cccccc] rounded-sm"></span>
                 <span class="block w-4 h-0.5 bg-[#cccccc] rounded-sm"></span>
             </div>
-            <span class="font-['Syne'] text-[0.95rem] font-extrabold text-[#f0f0f0] whitespace-nowrap max-[900px]:hidden">Enzzie Shop</span>
+            <span class="sidebar-brand font-['Syne'] text-[0.95rem] font-extrabold text-[#f0f0f0] whitespace-nowrap">Enzzie Shop</span>
         </div>
         <nav class="flex flex-col gap-[1px] pt-2.5">
-            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-[0.88rem] font-medium text-[#cccccc] no-underline border-l-[3px] border-transparent transition-all hover:bg-[#2e2e2e] hover:text-[#f0f0f0] {{ request()->routeIs('admin.dashboard') ? 'bg-[#2e2e2e] text-[#f0f0f0] border-l-[#c0392b]' : '' }}">
+            <a href="{{ route('admin.dashboard') }}"
+               class="flex items-center gap-2.5 px-4 py-2.5 text-[0.88rem] font-medium text-[#cccccc] no-underline border-l-[3px] border-transparent transition-all hover:bg-[#2e2e2e] hover:text-[#f0f0f0] {{ request()->routeIs('admin.dashboard') ? 'bg-[#2e2e2e] text-[#f0f0f0] border-l-[#c0392b]' : '' }}">
                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                <span class="max-[900px]:hidden whitespace-nowrap">Home</span>
+                <span class="sidebar-label whitespace-nowrap">Home</span>
             </a>
-            <a href="{{ route('admin.order.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-[0.88rem] font-medium text-[#cccccc] no-underline border-l-[3px] border-transparent transition-all hover:bg-[#2e2e2e] hover:text-[#f0f0f0] {{ request()->routeIs('admin.order.*') ? 'bg-[#2e2e2e] text-[#f0f0f0] border-l-[#c0392b]' : '' }}">
+            <a href="{{ route('admin.order.index') }}"
+               class="flex items-center gap-2.5 px-4 py-2.5 text-[0.88rem] font-medium text-[#cccccc] no-underline border-l-[3px] border-transparent transition-all hover:bg-[#2e2e2e] hover:text-[#f0f0f0] {{ request()->routeIs('admin.order.*') ? 'bg-[#2e2e2e] text-[#f0f0f0] border-l-[#c0392b]' : '' }}">
                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
-                <span class="max-[900px]:hidden whitespace-nowrap">Order</span>
+                <span class="sidebar-label whitespace-nowrap">Order</span>
             </a>
-            <a href="{{ route('admin.artist.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-[0.88rem] font-medium text-[#cccccc] no-underline border-l-[3px] border-transparent transition-all hover:bg-[#2e2e2e] hover:text-[#f0f0f0] {{ request()->routeIs('admin.artist.*') ? 'bg-[#2e2e2e] text-[#f0f0f0] border-l-[#c0392b]' : '' }}">
+            <a href="{{ route('admin.artist.index') }}"
+               class="flex items-center gap-2.5 px-4 py-2.5 text-[0.88rem] font-medium text-[#cccccc] no-underline border-l-[3px] border-transparent transition-all hover:bg-[#2e2e2e] hover:text-[#f0f0f0] {{ request()->routeIs('admin.artist.*') ? 'bg-[#2e2e2e] text-[#f0f0f0] border-l-[#c0392b]' : '' }}">
                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M5.5 20c0-3 3-5 6.5-5s6.5 2 6.5 5"/></svg>
-                <span class="max-[900px]:hidden whitespace-nowrap">Artis</span>
+                <span class="sidebar-label whitespace-nowrap">Artis</span>
             </a>
-            <a href="{{ route('admin.merch') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-[0.88rem] font-medium text-[#cccccc] no-underline border-l-[3px] border-transparent transition-all hover:bg-[#2e2e2e] hover:text-[#f0f0f0] {{ request()->routeIs('admin.merch*') ? 'bg-[#2e2e2e] text-[#f0f0f0] border-l-[#c0392b]' : '' }}">
+            <a href="{{ route('admin.merch') }}"
+               class="flex items-center gap-2.5 px-4 py-2.5 text-[0.88rem] font-medium text-[#cccccc] no-underline border-l-[3px] border-transparent transition-all hover:bg-[#2e2e2e] hover:text-[#f0f0f0] {{ request()->routeIs('admin.merch*') ? 'bg-[#2e2e2e] text-[#f0f0f0] border-l-[#c0392b]' : '' }}">
                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-                <span class="max-[900px]:hidden whitespace-nowrap">Merch</span>
+                <span class="sidebar-label whitespace-nowrap">Merch</span>
             </a>
         </nav>
     </aside>
 
-    <!-- MAIN -->
+    <!-- ── MAIN ── -->
     <main class="flex-1 flex flex-col min-w-0 bg-[#1c1c1c]">
+
+        <!-- TOPBAR (mobile only) -->
+        <div id="topbar">
+            <button id="topbarHamburgerBtn"
+                    class="w-8 h-8 rounded-full bg-[#2e2e2e] border border-[#3a3a3a] flex items-center justify-center flex-col gap-[3px] p-[7px] cursor-pointer flex-shrink-0"
+                    onclick="openSidebar()">
+                <span class="block w-3.5 h-0.5 bg-[#cccccc] rounded"></span>
+                <span class="block w-3.5 h-0.5 bg-[#cccccc] rounded"></span>
+                <span class="block w-3.5 h-0.5 bg-[#cccccc] rounded"></span>
+            </button>
+            <span class="topbar-brand font-['Syne'] text-[0.9rem] font-extrabold text-[#f0f0f0] flex-1 text-center">Enzzie Shop</span>
+            <!-- Spacer to balance hamburger -->
+            <div class="w-8 flex-shrink-0"></div>
+        </div>
+
         <!-- CONTENT AREA -->
-        <div class="flex-1 flex overflow-hidden h-screen">
+        <div class="flex-1 flex overflow-hidden" style="height: calc(100vh - 0px);">
+
             <!-- LEFT: TABLE -->
             <div class="flex-1 p-4 overflow-y-auto min-w-0">
+
                 <!-- SEARCH BAR -->
-                <div class="flex items-center gap-2 flex-wrap mb-3.5">
-                    <div class="flex flex-1 min-w-[200px]">
-                        <select id="filterStatus" class="bg-[#2e2e2e] border border-[#444] border-r-0 rounded-l-md px-2.5 py-1.5 text-[#cccccc] font-['DM_Sans'] text-[0.8rem] outline-none cursor-pointer min-w-[70px] focus:border-[#c0392b]" onchange="applyFilter()">
+                <div id="searchBar" class="flex items-center gap-2 flex-wrap mb-3.5">
+                    <div class="search-inner flex flex-1 min-w-[200px]">
+                        <select id="filterStatus"
+                                class="bg-[#2e2e2e] border border-[#444] border-r-0 rounded-l-md px-2.5 py-1.5 text-[#cccccc] font-['DM_Sans'] text-[0.8rem] outline-none cursor-pointer min-w-[70px] focus:border-[#c0392b]"
+                                onchange="applyFilter()">
                             <option value="all">All</option>
                             <option value="pending">Pending</option>
                             <option value="dikemas">Dikemas</option>
                             <option value="dikirim">Dikirim</option>
                             <option value="selesai">Selesai</option>
                         </select>
-                        <input type="text" id="searchInput" class="flex-1 bg-[#2e2e2e] border border-[#444] rounded-r-md px-3 py-1.5 text-[#f0f0f0] font-['DM_Sans'] text-[0.82rem] outline-none transition-colors placeholder:text-[#888] focus:border-[#c0392b]" placeholder="Nama Pelanggan atau ID" oninput="applyFilter()">
+                        <input type="text" id="searchInput"
+                               class="flex-1 bg-[#2e2e2e] border border-[#444] rounded-r-md px-3 py-1.5 text-[#f0f0f0] font-['DM_Sans'] text-[0.82rem] outline-none transition-colors placeholder:text-[#888] focus:border-[#c0392b]"
+                               placeholder="Nama Pelanggan atau ID"
+                               oninput="applyFilter()">
                     </div>
-                    <button class="px-5 py-1.5 bg-[#c0392b] text-white rounded-md font-['DM_Sans'] text-[0.82rem] font-semibold cursor-pointer transition-colors hover:bg-[#a93226] whitespace-nowrap" onclick="applyFilter()">Cari</button>
+                    <button class="px-5 py-1.5 bg-[#c0392b] text-white rounded-md font-['DM_Sans'] text-[0.82rem] font-semibold cursor-pointer transition-colors hover:bg-[#a93226] whitespace-nowrap"
+                            onclick="applyFilter()">Cari</button>
                 </div>
 
                 <!-- ORDER TABLE -->
@@ -78,20 +241,23 @@
                                 <tr class="bg-[#2e2e2e]">
                                     <th class="px-3.5 py-2.5 text-left text-[0.75rem] font-bold tracking-wider uppercase text-[#cccccc]">ID</th>
                                     <th class="px-3.5 py-2.5 text-left text-[0.75rem] font-bold tracking-wider uppercase text-[#cccccc]">Pelanggan</th>
-                                    <th class="px-3.5 py-2.5 text-left text-[0.75rem] font-bold tracking-wider uppercase text-[#cccccc]">Total</th>
+                                    <th class="px-3.5 py-2.5 text-left text-[0.75rem] font-bold tracking-wider uppercase text-[#cccccc] col-hide-sm">Total</th>
                                     <th class="px-3.5 py-2.5 text-left text-[0.75rem] font-bold tracking-wider uppercase text-[#cccccc]">Status</th>
-                                    <th class="px-3.5 py-2.5 text-left text-[0.75rem] font-bold tracking-wider uppercase text-[#cccccc]">Tanggal</th>
+                                    <th class="px-3.5 py-2.5 text-left text-[0.75rem] font-bold tracking-wider uppercase text-[#cccccc] col-hide-sm">Tanggal</th>
                                     <th class="px-3.5 py-2.5 text-left text-[0.75rem] font-bold tracking-wider uppercase text-[#cccccc]">Detail</th>
                                 </tr>
                             </thead>
                             <tbody id="orderTableBody">
                                 @forelse($orders as $order)
-                                <tr class="transition-colors hover:bg-white/[0.03] [&.row-active]:bg-[#c0392b]/[0.07]" data-id="{{ $order->id }}" data-pelanggan="{{ strtolower($order->pelanggan) }}" data-status="{{ $order->status }}">
+                                <tr class="transition-colors hover:bg-white/[0.03] [&.row-active]:bg-[#c0392b]/[0.07]"
+                                    data-id="{{ $order->id }}"
+                                    data-pelanggan="{{ strtolower($order->pelanggan) }}"
+                                    data-status="{{ $order->status }}">
                                     <td class="px-3.5 py-2.5 text-[0.84rem] border-t border-[#3a3a3a] text-[#888] font-semibold">{{ $order->id }}</td>
                                     <td class="px-3.5 py-2.5 text-[0.84rem] border-t border-[#3a3a3a] text-[#f0f0f0]">{{ $order->pelanggan }}</td>
-                                    <td class="px-3.5 py-2.5 text-[0.84rem] border-t border-[#3a3a3a] text-[#f0f0f0] font-semibold">{{ $order->total_rupiah }}</td>
+                                    <td class="px-3.5 py-2.5 text-[0.84rem] border-t border-[#3a3a3a] text-[#f0f0f0] font-semibold col-hide-sm">{{ $order->total_rupiah }}</td>
                                     <td class="px-3.5 py-2.5 text-[0.84rem] border-t border-[#3a3a3a]">
-                                        <select class="appearance-none border border-[#3a3a3a] rounded-md px-2 py-1 pr-6 font-['DM_Sans'] text-[0.76rem] font-semibold cursor-pointer outline-none bg-no-repeat bg-[right_7px_center] bg-[length:8px_5px] transition-all
+                                        <select class="status-select appearance-none border border-[#3a3a3a] rounded-md px-2 py-1 pr-6 font-['DM_Sans'] text-[0.76rem] font-semibold cursor-pointer outline-none bg-no-repeat bg-[right_7px_center] bg-[length:8px_5px] transition-all
                                             @if($order->status === 'pending') bg-[rgba(217,119,6,0.15)] text-[#f59e0b] border-[rgba(217,119,6,0.3)]
                                             @elseif($order->status === 'dikemas') bg-[rgba(37,99,235,0.15)] text-[#60a5fa] border-[rgba(37,99,235,0.3)]
                                             @elseif($order->status === 'dikirim') bg-[rgba(5,150,105,0.15)] text-[#34d399] border-[rgba(5,150,105,0.3)]
@@ -99,15 +265,16 @@
                                             @endif"
                                             style="background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'5\' viewBox=\'0 0 9 5\'%3E%3Cpath d=\'M0 0l4.5 5 4.5-5z\' fill=\'%23888\'/%3E%3C/svg%3E')"
                                             onchange="updateStatus(this, {{ $order->id }})">
-                                            <option value="pending" @selected($order->status === 'pending') class="bg-[#2e2e2e] text-white">Pending</option>
-                                            <option value="dikemas" @selected($order->status === 'dikemas') class="bg-[#2e2e2e] text-white">Dikemas</option>
-                                            <option value="dikirim" @selected($order->status === 'dikirim') class="bg-[#2e2e2e] text-white">Dikirim</option>
-                                            <option value="selesai" @selected($order->status === 'selesai') class="bg-[#2e2e2e] text-white">Selesai</option>
+                                            <option value="pending"  @selected($order->status === 'pending')  class="bg-[#2e2e2e] text-white">Pending</option>
+                                            <option value="dikemas"  @selected($order->status === 'dikemas')  class="bg-[#2e2e2e] text-white">Dikemas</option>
+                                            <option value="dikirim"  @selected($order->status === 'dikirim')  class="bg-[#2e2e2e] text-white">Dikirim</option>
+                                            <option value="selesai"  @selected($order->status === 'selesai')  class="bg-[#2e2e2e] text-white">Selesai</option>
                                         </select>
                                     </td>
-                                    <td class="px-3.5 py-2.5 text-[0.84rem] border-t border-[#3a3a3a] text-[#cccccc]">{{ $order->created_at->format('Y-m-d H:i') }}</td>
+                                    <td class="px-3.5 py-2.5 text-[0.84rem] border-t border-[#3a3a3a] text-[#cccccc] col-hide-sm">{{ $order->created_at->format('Y-m-d H:i') }}</td>
                                     <td class="px-3.5 py-2.5 text-[0.84rem] border-t border-[#3a3a3a]">
-                                        <button class="px-3.5 py-1 bg-[#c0392b] text-white rounded-md font-['DM_Sans'] text-[0.76rem] font-semibold cursor-pointer transition-all hover:bg-[#a93226] [&.active]:bg-[#a93226] [&.active]:shadow-[0_0_0_2px_rgba(192,57,43,0.35)]" onclick="showDetail(this, {{ $order->id }})">Detail</button>
+                                        <button class="px-3.5 py-1 bg-[#c0392b] text-white rounded-md font-['DM_Sans'] text-[0.76rem] font-semibold cursor-pointer transition-all hover:bg-[#a93226] [&.active]:bg-[#a93226] [&.active]:shadow-[0_0_0_2px_rgba(192,57,43,0.35)]"
+                                                onclick="showDetail(this, {{ $order->id }})">Detail</button>
                                     </td>
                                 </tr>
                                 @empty
@@ -122,12 +289,13 @@
             </div>
 
             <!-- RIGHT: DETAIL PANEL -->
-            <aside id="detailPanel" class="w-0 bg-[#242424] border-l border-[#3a3a3a] overflow-hidden flex flex-col shrink-0 transition-[width] duration-300 [&.open]:w-[310px] max-[700px]:fixed max-[700px]:right-0 max-[700px]:top-0 max-[700px]:bottom-0 max-[700px]:[&.open]:w-[min(320px,95vw)] max-[700px]:z-[200] max-[700px]:shadow-[-8px_0_32px_rgba(0,0,0,0.7)]">
-                <div class="w-[310px] h-full flex flex-col">
+            <aside id="detailPanel">
+                <div class="w-[310px] h-full flex flex-col" style="min-width:310px;">
                     <!-- PANEL HEADER -->
-                    <div class="px-3.5 py-3 flex items-center justify-between border-b border-[#3a3a3a] bg-[#2e2e2e] shrink-0">
+                    <div class="px-3.5 py-3 flex items-center justify-between border-b border-[#3a3a3a] bg-[#2e2e2e] flex-shrink-0">
                         <span class="font-['Syne'] text-[0.9rem] font-bold text-[#f0f0f0]">← Rincian Pesanan</span>
-                        <div class="w-6 h-6 rounded bg-[#383838] border border-[#3a3a3a] flex items-center justify-center cursor-pointer text-[#888] text-[0.8rem] transition-all hover:bg-[#444] hover:text-[#f0f0f0]" onclick="closeDetail()">✕</div>
+                        <div class="w-6 h-6 rounded bg-[#383838] border border-[#3a3a3a] flex items-center justify-center cursor-pointer text-[#888] text-[0.8rem] transition-all hover:bg-[#444] hover:text-[#f0f0f0]"
+                             onclick="closeDetail()">✕</div>
                     </div>
 
                     <!-- PANEL BODY -->
@@ -178,15 +346,17 @@
                                 <span class="text-[0.81rem] font-bold text-[#f0f0f0]">No. Pesanan</span>
                                 <span class="text-[0.78rem] text-[#888] flex items-center gap-2">
                                     <span id="noPesanan">—</span>
-                                    <button class="px-2 py-0.5 bg-[#383838] border border-[#444] rounded text-[#888] text-[0.68rem] font-bold cursor-pointer transition-all hover:bg-[#3a3a3a] hover:text-[#f0f0f0] [&.copied]:bg-[#059669]/20 [&.copied]:text-[#34d399] [&.copied]:border-[#059669]/30" onclick="salinNoPesanan(this)">Salin</button>
+                                    <button class="px-2 py-0.5 bg-[#383838] border border-[#444] rounded text-[#888] text-[0.68rem] font-bold cursor-pointer transition-all hover:bg-[#3a3a3a] hover:text-[#f0f0f0] [&.copied]:bg-[#059669]/20 [&.copied]:text-[#34d399] [&.copied]:border-[#059669]/30"
+                                            onclick="salinNoPesanan(this)">Salin</button>
                                 </span>
                             </div>
                         </div>
                     </div>
 
                     <!-- PANEL FOOTER -->
-                    <div class="p-3.5 border-t border-[#3a3a3a] bg-[#242424] shrink-0">
-                        <button class="w-full px-2.5 py-2 bg-[#2e2e2e] border border-[#444] rounded-md text-[#f0f0f0] font-['DM_Sans'] text-[0.85rem] font-semibold cursor-pointer transition-all hover:bg-[#3a3a3a] tracking-wide" onclick="window.print()">Cetak</button>
+                    <div class="p-3.5 border-t border-[#3a3a3a] bg-[#242424] flex-shrink-0">
+                        <button class="w-full px-2.5 py-2 bg-[#2e2e2e] border border-[#444] rounded-md text-[#f0f0f0] font-['DM_Sans'] text-[0.85rem] font-semibold cursor-pointer transition-all hover:bg-[#3a3a3a] tracking-wide"
+                                onclick="window.print()">Cetak</button>
                     </div>
                 </div>
             </aside>
@@ -200,6 +370,29 @@
     let activeDetailBtn = null;
     let activeOrderId   = null;
 
+    // ── Sidebar controls ──
+    function toggleSidebar() {
+        if (window.innerWidth <= 768) {
+            openSidebar();
+        } else {
+            const sb = document.getElementById('sidebar');
+            const collapsed = sb.style.width === '60px';
+            sb.style.width = collapsed ? '240px' : '60px';
+            sb.querySelectorAll('.sidebar-label, .sidebar-brand').forEach(el => {
+                el.style.display = collapsed ? '' : 'none';
+            });
+        }
+    }
+    function openSidebar() {
+        document.getElementById('sidebar').classList.add('open');
+        document.getElementById('sidebarOverlay').classList.remove('hidden');
+    }
+    function closeSidebar() {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.add('hidden');
+    }
+
+    // ── Filter / search ──
     function applyFilter() {
         const filter = document.getElementById('filterStatus').value;
         const search = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -210,20 +403,21 @@
         });
     }
 
+    // ── Update status ──
     async function updateStatus(sel, id) {
         const newStatus = sel.value;
 
         sel.classList.remove(
-            'bg-[rgba(217,119,6,0.15)]', 'text-[#f59e0b]', 'border-[rgba(217,119,6,0.3)]',
-            'bg-[rgba(37,99,235,0.15)]', 'text-[#60a5fa]', 'border-[rgba(37,99,235,0.3)]',
-            'bg-[rgba(5,150,105,0.15)]', 'text-[#34d399]', 'border-[rgba(5,150,105,0.3)]',
-            'bg-[rgba(107,114,128,0.15)]', 'text-[#9ca3af]', 'border-[rgba(107,114,128,0.3)]'
+            'bg-[rgba(217,119,6,0.15)]',    'text-[#f59e0b]', 'border-[rgba(217,119,6,0.3)]',
+            'bg-[rgba(37,99,235,0.15)]',     'text-[#60a5fa]', 'border-[rgba(37,99,235,0.3)]',
+            'bg-[rgba(5,150,105,0.15)]',     'text-[#34d399]', 'border-[rgba(5,150,105,0.3)]',
+            'bg-[rgba(107,114,128,0.15)]',   'text-[#9ca3af]', 'border-[rgba(107,114,128,0.3)]'
         );
 
-        if (newStatus === 'pending')  sel.classList.add('bg-[rgba(217,119,6,0.15)]', 'text-[#f59e0b]', 'border-[rgba(217,119,6,0.3)]');
-        else if (newStatus === 'dikemas') sel.classList.add('bg-[rgba(37,99,235,0.15)]', 'text-[#60a5fa]', 'border-[rgba(37,99,235,0.3)]');
-        else if (newStatus === 'dikirim') sel.classList.add('bg-[rgba(5,150,105,0.15)]', 'text-[#34d399]', 'border-[rgba(5,150,105,0.3)]');
-        else if (newStatus === 'selesai') sel.classList.add('bg-[rgba(107,114,128,0.15)]', 'text-[#9ca3af]', 'border-[rgba(107,114,128,0.3)]');
+        if      (newStatus === 'pending')  sel.classList.add('bg-[rgba(217,119,6,0.15)]',   'text-[#f59e0b]', 'border-[rgba(217,119,6,0.3)]');
+        else if (newStatus === 'dikemas')  sel.classList.add('bg-[rgba(37,99,235,0.15)]',   'text-[#60a5fa]', 'border-[rgba(37,99,235,0.3)]');
+        else if (newStatus === 'dikirim')  sel.classList.add('bg-[rgba(5,150,105,0.15)]',   'text-[#34d399]', 'border-[rgba(5,150,105,0.3)]');
+        else if (newStatus === 'selesai')  sel.classList.add('bg-[rgba(107,114,128,0.15)]', 'text-[#9ca3af]', 'border-[rgba(107,114,128,0.3)]');
 
         sel.closest('tr').dataset.status = newStatus;
         if (activeOrderId === id) {
@@ -242,6 +436,7 @@
         }
     }
 
+    // ── Show detail panel ──
     async function showDetail(btn, id) {
         const panel = document.getElementById('detailPanel');
 
@@ -259,6 +454,10 @@
         btn.classList.add('active');
         btn.closest('tr').classList.add('row-active');
         panel.classList.add('open');
+
+        // Show backdrop on mobile
+        document.getElementById('detailOverlay').classList.add('show');
+
         document.getElementById('panelLoading').classList.add('show');
 
         try {
@@ -267,14 +466,14 @@
             });
             const data = await res.json();
 
-            document.getElementById('rincian-pelanggan').textContent = data.pelanggan       ?? '—';
-            document.getElementById('rincian-email').textContent     = data.email           ?? '—';
-            document.getElementById('rincian-status').textContent    = data.status_label    ?? '—';
-            document.getElementById('rincian-tanggal').textContent   = data.tanggal         ?? '—';
+            document.getElementById('rincian-pelanggan').textContent = data.pelanggan            ?? '—';
+            document.getElementById('rincian-email').textContent     = data.email               ?? '—';
+            document.getElementById('rincian-status').textContent    = data.status_label        ?? '—';
+            document.getElementById('rincian-tanggal').textContent   = data.tanggal             ?? '—';
             document.getElementById('rincian-artis').textContent     = (data.artis ?? '—') + ' >';
-            document.getElementById('rincian-total').textContent     = data.total           ?? '—';
-            document.getElementById('rincian-metode').textContent    = data.metode_pembayaran ?? '—';
-            document.getElementById('noPesanan').textContent         = data.no_pesanan      ?? '—';
+            document.getElementById('rincian-total').textContent     = data.total               ?? '—';
+            document.getElementById('rincian-metode').textContent    = data.metode_pembayaran   ?? '—';
+            document.getElementById('noPesanan').textContent         = data.no_pesanan          ?? '—';
 
             const container = document.getElementById('merch-items-container');
             container.innerHTML = (data.items ?? []).map(item => `
@@ -303,8 +502,10 @@
         }
     }
 
+    // ── Close detail panel ──
     function closeDetail() {
         document.getElementById('detailPanel').classList.remove('open');
+        document.getElementById('detailOverlay').classList.remove('show');
         if (activeDetailBtn) {
             activeDetailBtn.classList.remove('active');
             activeDetailBtn.closest('tr')?.classList.remove('row-active');
@@ -313,6 +514,7 @@
         activeOrderId   = null;
     }
 
+    // ── Copy order number ──
     function salinNoPesanan(btn) {
         const no = document.getElementById('noPesanan').textContent;
         navigator.clipboard.writeText(no).then(() => {
@@ -324,6 +526,18 @@
             setTimeout(() => btn.textContent = 'Salin', 2000);
         });
     }
+
+    // ── Adjust content height when topbar is visible ──
+    function adjustLayout() {
+        const topbar = document.getElementById('topbar');
+        const contentArea = document.querySelector('.flex-1.flex.overflow-hidden');
+        if (topbar && contentArea) {
+            const topbarH = window.innerWidth <= 768 ? topbar.offsetHeight : 0;
+            contentArea.style.height = `calc(100vh - ${topbarH}px)`;
+        }
+    }
+    adjustLayout();
+    window.addEventListener('resize', adjustLayout);
 </script>
 </body>
 </html>

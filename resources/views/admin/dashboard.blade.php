@@ -46,6 +46,7 @@
     <style>
         body { font-family: 'DM Sans', sans-serif; }
         h1, .font-syne { font-family: 'Syne', sans-serif; }
+
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 10px; }
@@ -53,6 +54,8 @@
         .merch-grid { scrollbar-width: thin; scrollbar-color: #3a3a3a transparent; }
         .artis-row::-webkit-scrollbar { display: none; }
         .artis-row { scrollbar-width: none; }
+
+        /* ── PANEL BASE ── */
         .panel-base {
             position: fixed;
             top: 0; right: 0;
@@ -76,7 +79,48 @@
             from { transform: translateX(100%); opacity: 0; }
             to   { transform: translateX(0);    opacity: 1; }
         }
-        @media (max-width: 480px) { .panel-base { width: 100%; } }
+        @media (max-width: 480px) {
+            .panel-base { width: 100%; }
+        }
+
+        /* ── SIDEBAR ── */
+        #sidebar {
+            width: 240px;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            background: #1e1e1e;
+            border-right: 1px solid #2e2e38;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            z-index: 100;
+            transition: transform 0.3s ease, width 0.3s ease;
+            overflow: hidden;
+        }
+
+        @media (max-width: 900px) and (min-width: 769px) {
+            #sidebar { width: 60px; }
+            .sidebar-label { display: none !important; }
+            .sidebar-brand { display: none !important; }
+        }
+
+  
+        @media (max-width: 768px) {
+            #sidebar {
+                position: fixed;
+                left: 0; top: 0;
+                width: 220px;
+                z-index: 200;
+                transform: translateX(-100%);
+                box-shadow: 4px 0 24px rgba(0,0,0,0.6);
+            }
+            #sidebar.open {
+                transform: translateX(0);
+            }
+        }
+
+       
         .preview-img { display: none; }
         .preview-img.show { display: block; }
         .upload-text.hide { display: none; }
@@ -85,19 +129,80 @@
         .artis-chip:hover .artis-avatar { border-color: #c0392b; box-shadow: 0 0 0 3px rgba(192,57,43,0.25); }
         .banner-card:hover .banner-overlay { opacity: 1 !important; }
         .filter-tab.active { background: #c0392b !important; color: #fff !important; border-color: #c0392b !important; }
+
+        /* Topbar title: hanya mobile */
+        .topbar-title { display: none; }
+        @media (max-width: 768px) {
+            .topbar-title { display: block; }
+        }
+
+        /* Hamburger desktop: sembunyikan di mobile (pakai topbar btn) */
+        .sidebar-hamburger { display: flex; }
+        @media (max-width: 768px) {
+            .sidebar-hamburger { display: none; }
+        }
+
+        /* Topbar hamburger: hanya mobile */
+        #topbarHamburgerBtn { display: none; }
+        @media (max-width: 768px) {
+            #topbarHamburgerBtn { display: flex; }
+        }
+
+        /* ── MOBILE GRID: Banner & Merch ── */
+        @media (max-width: 640px) {
+            .banner-slider {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                overflow: visible !important;
+            }
+            .banner-card {
+                width: 100% !important;
+                flex-shrink: unset !important;
+                height: 110px !important;
+            }
+            #btnTambahBanner {
+                width: 100% !important;
+                flex-shrink: unset !important;
+                height: 80px !important;
+            }
+            .merch-grid {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                overflow: visible !important;
+            }
+            .merch-card {
+                width: 100% !important;
+                flex-shrink: unset !important;
+            }
+            /* Filter tabs: scroll horizontal, no wrap */
+            #filterTabs {
+                flex-wrap: nowrap !important;
+                overflow-x: auto !important;
+                padding-bottom: 4px;
+                -webkit-overflow-scrolling: touch;
+            }
+            #filterTabs::-webkit-scrollbar { height: 2px; }
+        }
     </style>
 </head>
 <body class="bg-bg text-text1 min-h-screen flex">
 
+<!-- ── SIDEBAR OVERLAY (mobile) ── -->
+<div id="sidebarOverlay"
+     class="fixed inset-0 bg-black/50 z-[190] hidden"
+     onclick="closeSidebar()"></div>
+
 <!-- ── SIDEBAR ── -->
-<aside id="sidebar" class="w-[240px] max-[900px]:w-[60px] h-screen sticky top-0 bg-[#1e1e1e] border-r border-[#2e2e38] flex flex-col shrink-0 z-[100] transition-all duration-300 max-[768px]:fixed max-[768px]:-left-full max-[768px]:w-[200px] [&.open]:left-0 overflow-hidden">
-    <div class="flex items-center gap-2.5 px-3.5 py-4 border-b border-[#2e2e38]">
-        <div class="flex flex-col gap-1 cursor-pointer p-0.5 max-[768px]:hidden shrink-0" onclick="toggleSidebar()">
+<aside id="sidebar">
+    <div class="flex items-center gap-2.5 px-3.5 py-4 border-b border-[#2e2e38] flex-shrink-0">
+        <!-- Hamburger toggle (desktop/tablet only) -->
+        <div class="sidebar-hamburger flex-col gap-1 cursor-pointer p-0.5 shrink-0"
+             onclick="toggleSidebar()">
             <span class="block w-4 h-0.5 bg-[#cccccc] rounded-sm"></span>
             <span class="block w-4 h-0.5 bg-[#cccccc] rounded-sm"></span>
             <span class="block w-4 h-0.5 bg-[#cccccc] rounded-sm"></span>
         </div>
-        <h1 class="font-['Syne'] text-[0.95rem] font-extrabold text-[#f0f0f4] truncate overflow-hidden max-[900px]:hidden">Enzzie Shop</h1>
+        <h1 class="sidebar-brand font-syne text-[0.95rem] font-extrabold text-[#f0f0f4] truncate overflow-hidden">Enzzie Shop</h1>
     </div>
     <nav class="flex flex-col gap-px py-1 flex-1">
         <a href="{{ route('admin.dashboard') }}"
@@ -107,7 +212,7 @@
                 <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
                 <polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
-            <span class="max-[900px]:hidden">Home</span>
+            <span class="sidebar-label">Home</span>
         </a>
         <a href="{{ route('admin.order.index') }}"
            class="flex items-center gap-2.5 px-4 py-2.5 text-[0.88rem] font-medium text-text2 border-l-[3px] transition-all duration-150 hover:bg-bg3 hover:text-text1 no-underline
@@ -116,7 +221,7 @@
                 <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
                 <rect x="9" y="3" width="6" height="4" rx="1"/>
             </svg>
-            <span class="max-[900px]:hidden">Order</span>
+            <span class="sidebar-label">Order</span>
         </a>
         <a href="{{ route('admin.artist.index') }}"
            class="flex items-center gap-2.5 px-4 py-2.5 text-[0.88rem] font-medium text-text2 border-l-[3px] transition-all duration-150 hover:bg-bg3 hover:text-text1 no-underline
@@ -125,7 +230,7 @@
                 <circle cx="12" cy="7" r="4"/>
                 <path d="M5.5 20c0-3 3-5 6.5-5s6.5 2 6.5 5"/>
             </svg>
-            <span class="max-[900px]:hidden">Artis</span>
+            <span class="sidebar-label">Artis</span>
         </a>
         <a href="{{ route('admin.merch') }}"
            class="flex items-center gap-2.5 px-4 py-2.5 text-[0.88rem] font-medium text-text2 border-l-[3px] transition-all duration-150 hover:bg-bg3 hover:text-text1 no-underline
@@ -134,7 +239,7 @@
                 <rect x="2" y="3" width="20" height="14" rx="2"/>
                 <path d="M8 21h8M12 17v4"/>
             </svg>
-            <span class="max-[900px]:hidden">Merch</span>
+            <span class="sidebar-label">Merch</span>
         </a>
     </nav>
 </aside>
@@ -143,13 +248,19 @@
 <div class="flex-1 flex flex-col min-w-0 bg-[#181818]">
 
     <!-- TOPBAR -->
-    <div class="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-border1 bg-sidebar h-[52px]">
+    <div class="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-border1 bg-sidebar h-[52px] sticky top-0 z-50">
+        <!-- Hamburger (mobile only) -->
         <button id="topbarHamburgerBtn"
-                class="flex md:hidden w-8 h-8 rounded-full bg-bg3 border border-border1 items-center justify-center flex-col gap-[3px] p-[7px] cursor-pointer">
+                class="w-8 h-8 rounded-full bg-bg3 border border-border1 items-center justify-center flex-col gap-[3px] p-[7px] cursor-pointer"
+                onclick="openSidebar()">
             <span class="block w-3.5 h-0.5 bg-text2 rounded"></span>
             <span class="block w-3.5 h-0.5 bg-text2 rounded"></span>
             <span class="block w-3.5 h-0.5 bg-text2 rounded"></span>
         </button>
+        <!-- Brand title (mobile only) -->
+        <span class="topbar-title font-syne text-[0.9rem] font-extrabold text-text1 flex-1 text-center">Enzzie Shop</span>
+        <!-- Spacer for right side (mobile balance) -->
+        <div class="w-8 md:hidden"></div>
     </div>
 
     <!-- CONTENT -->
@@ -160,17 +271,15 @@
             <span class="font-syne text-[0.72rem] font-bold tracking-[0.1em] uppercase text-muted">Banner</span>
         </div>
 
-        <div class="banner-slider flex gap-3 overflow-x-auto pb-2 scroll-smooth
-                    max-sm:grid max-sm:grid-cols-[repeat(auto-fill,minmax(140px,1fr))] max-sm:overflow-visible" id="bannerSlider">
+        <div class="banner-slider flex gap-3 overflow-x-auto pb-2 scroll-smooth" id="bannerSlider">
             @foreach($banners as $banner)
             <div class="banner-card flex-shrink-0 w-[260px] h-[150px] rounded-[10px] overflow-hidden relative border-2 cursor-pointer bg-bg3 transition-all duration-200 hover:-translate-y-0.5 z-10
-                        {{ $banner->is_active ? 'border-accent' : 'border-transparent hover:border-accent' }}
-                        max-sm:w-full max-sm:h-[120px]"
+                        {{ $banner->is_active ? 'border-accent' : 'border-transparent hover:border-accent' }}"
                  onclick="openEditBanner({{ $banner->id }}); event.stopPropagation();">
                 @if($banner->image)
                     <img src="{{ asset('storage/' . $banner->image) }}" alt="{{ $banner->title }}" class="w-full h-full object-cover block">
                 @endif
-                <div class="absolute top-1.5 right-1.5 bg-black/55 rounded-md px-1.5 py-1 text-[0.62rem] text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none banner-overlay">✏ Edit</div>
+                <div class="absolute top-1.5 right-1.5 bg-black/55 rounded-md px-1.5 py-1 text-[0.62rem] text-white font-semibold opacity-0 transition-opacity pointer-events-none banner-overlay">✏ Edit</div>
                 <div class="absolute bottom-0 left-0 right-0 pt-6 px-2.5 pb-2 bg-gradient-to-t from-black/75 to-transparent text-[0.68rem] font-semibold text-white">
                     {{ $banner->title }}@if($banner->artist) — {{ $banner->artist->name }}@endif
                 </div>
@@ -178,8 +287,7 @@
             @endforeach
 
             <div id="btnTambahBanner"
-                 class="flex-shrink-0 w-[90px] h-[150px] rounded-[10px] border-2 border-dashed border-border2 flex flex-col items-center justify-center gap-1.5 cursor-pointer text-muted text-[0.7rem] font-semibold transition-all duration-200 hover:border-accent hover:text-accent hover:bg-accent/5
-                        max-sm:w-full max-sm:h-[120px]">
+                 class="flex-shrink-0 w-[90px] h-[150px] rounded-[10px] border-2 border-dashed border-border2 flex flex-col items-center justify-center gap-1.5 cursor-pointer text-muted text-[0.7rem] font-semibold transition-all duration-200 hover:border-accent hover:text-accent hover:bg-accent/5">
                 <span class="text-[1.3rem] font-light">+</span>
                 <span>Tambah</span>
             </div>
@@ -269,13 +377,14 @@
         <div class="h-px bg-border1 my-4"></div>
 
         <!-- ── MERCH SECTION ── -->
-        <div class="flex items-start justify-between mb-2.5 gap-2.5 max-sm:flex-col max-sm:items-start">
-            <div>
+        <div class="flex items-start justify-between mb-2.5 gap-2.5 flex-wrap">
+            <div class="flex-1 min-w-0">
                 <div class="font-syne text-[0.72rem] font-bold tracking-[0.1em] uppercase text-muted mb-2">Merch</div>
-                <div class="flex gap-1.5 flex-wrap items-center max-sm:overflow-x-auto max-sm:flex-nowrap" id="filterTabs">
-                    <button class="filter-tab px-3 py-[3px] rounded-full text-[0.7rem] font-semibold cursor-pointer border transition-all duration-150 active bg-accent text-white border-accent" data-filter="all">All</button>
+                <div class="flex gap-1.5 items-center" id="filterTabs"
+                     style="flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch;">
+                    <button class="filter-tab flex-shrink-0 px-3 py-[3px] rounded-full text-[0.7rem] font-semibold cursor-pointer border transition-all duration-150 active bg-accent text-white border-accent" data-filter="all">All</button>
                     @foreach($artists as $artist)
-                    <button class="filter-tab px-3 py-[3px] rounded-full text-[0.7rem] font-semibold cursor-pointer border border-border1 bg-transparent text-muted transition-all duration-150 hover:border-accent hover:text-accent flex-shrink-0"
+                    <button class="filter-tab flex-shrink-0 px-3 py-[3px] rounded-full text-[0.7rem] font-semibold cursor-pointer border border-border1 bg-transparent text-muted transition-all duration-150 hover:border-accent hover:text-accent"
                             data-filter="{{ $artist->slug ?? strtolower(str_replace(' ','-',$artist->name)) }}">
                         {{ $artist->name }}
                     </button>
@@ -283,14 +392,13 @@
                 </div>
             </div>
             <a href="{{ route('admin.merch') }}"
-               class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-accent text-white text-[0.75rem] font-semibold hover:bg-accentH transition-all duration-150 no-underline flex-shrink-0">+ Tambah Merch</a>
+               class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-accent text-white text-[0.75rem] font-semibold hover:bg-accentH transition-all duration-150 no-underline">+ Tambah Merch</a>
         </div>
 
         <!-- Merch Grid -->
-        <div class="merch-grid flex gap-2.5 overflow-x-auto pb-2
-                    max-sm:grid max-sm:grid-cols-[repeat(auto-fill,minmax(130px,1fr))] max-sm:overflow-visible" id="merchGrid">
+        <div class="merch-grid flex gap-2.5 overflow-x-auto pb-2" id="merchGrid">
             @foreach($merches as $merch)
-            <div class="merch-card flex-shrink-0 w-[150px] bg-bg2 border border-border1 rounded-[10px] overflow-hidden cursor-pointer transition-all duration-200 hover:border-accent hover:-translate-y-0.5 max-sm:w-full"
+            <div class="merch-card flex-shrink-0 w-[150px] bg-bg2 border border-border1 rounded-[10px] overflow-hidden cursor-pointer transition-all duration-200 hover:border-accent hover:-translate-y-0.5"
                  data-artis="{{ $merch->artist->slug ?? strtolower(str_replace(' ','-',$merch->artist->name ?? '')) }}"
                  onclick="openEditMerch({{ $merch->id }})">
                 <div class="w-full aspect-square bg-bg3 flex items-center justify-center text-muted text-3xl overflow-hidden">
@@ -379,10 +487,6 @@
 <div id="overlay"
      class="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-[9998] hidden"
      onclick="closeAllPanels()"></div>
-
-<div id="sidebarOverlay"
-     onclick="closeSidebar()"
-     class="fixed inset-0 bg-black/50 z-[299] hidden"></div>
 
 <!-- ── PANEL: TAMBAH BANNER ── -->
 <div id="panelBanner" class="panel-base">
@@ -588,22 +692,31 @@
 
     // ── Sidebar toggle ──
     function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('open');
+        // Desktop/tablet: toggle collapse
+        const sidebar = document.getElementById('sidebar');
+        if (window.innerWidth > 768) {
+            const isCollapsed = sidebar.style.width === '60px';
+            sidebar.style.width = isCollapsed ? '240px' : '60px';
+            sidebar.querySelectorAll('.sidebar-label, .sidebar-brand').forEach(el => {
+                el.style.display = isCollapsed ? '' : 'none';
+            });
+        } else {
+            openSidebar();
+        }
     }
     function openSidebar() {
-        document.getElementById('sidebar').style.left = '0';
+        document.getElementById('sidebar').classList.add('open');
         document.getElementById('sidebarOverlay').classList.remove('hidden');
     }
     function closeSidebar() {
-        document.getElementById('sidebar').style.left = '-100%';
+        document.getElementById('sidebar').classList.remove('open');
         document.getElementById('sidebarOverlay').classList.add('hidden');
     }
 
     // ── topbar hamburger (mobile only) ──
     document.getElementById('topbarHamburgerBtn').addEventListener('click', function(e) {
         e.stopPropagation();
-        const sidebar = document.getElementById('sidebar');
-        sidebar.style.left === '0px' ? closeSidebar() : openSidebar();
+        openSidebar();
     });
 
     // ── Button listeners ──
