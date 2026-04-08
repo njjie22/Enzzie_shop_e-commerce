@@ -50,30 +50,25 @@ class ArtistController extends Controller
      * POST /admin/artist
      */
     public function store(Request $request)
-    {
-        $request->validate([
-            'name'  => 'required|string|max:100',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
-        ]);
+{
+    $request->validate([
+        'name'  => 'required|string|max:100',
+        'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
+    ]);
 
-        $data = [
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-        ];
+    $data = [
+        'name' => $request->name,
+        'slug' => Str::slug($request->name),
+    ];
 
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('artists', 'public');
-        }
-
-        $artist = Artist::create($data);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Artis berhasil ditambahkan.',
-            'artist'  => $artist,
-        ]);
+    if ($request->hasFile('avatar')) {
+        $data['avatar'] = $request->file('avatar')->store('artists', 'public');
     }
 
+    Artist::create($data);
+
+    return back(); // atau response json juga boleh
+}
     /**
      * Update artis
      * POST /admin/artist/{id} (dengan _method=PUT)

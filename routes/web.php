@@ -104,6 +104,7 @@ Route::prefix('user')
         Route::post('/order', [UserOrderController::class, 'store'])->name('order.store');
         Route::get('/order/{id}', [UserOrderController::class, 'show'])->name('order.show');
         Route::patch('/order/{id}/cancel', [UserOrderController::class, 'cancel'])->name('order.cancel');
+        Route::post('order/buy-now', [UserOrderController::class, 'buyNow'])->name('order.buy-now');
 
         // ---------- Notifications ----------
         Route::get('/notifications', [UserNotificationController::class, 'index'])->name('notifications.index');
@@ -118,3 +119,4 @@ Route::prefix('user')
        // ---------- Merch Detail ----------
 Route::get('/merch/{id}', [UserMerchController::class, 'show'])->name('merch.show');
     });
+    

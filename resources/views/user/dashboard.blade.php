@@ -104,10 +104,10 @@
                         <td class="px-4 py-3">
                             <div class="flex items-center gap-3">
                                 <div class="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-enzzie-border" style="background-color: #1e1e1e">
-                                    @if($artist->image)
-                                        <img src="{{ asset('storage/'.$artist->image) }}" alt="{{ $artist->name }}" class="w-full h-full object-cover">
+                                    @if($artist->avatar || $artist->image)
+                                        <img src="{{ asset('storage/' . ($artist->avatar ?? $artist->image)) }}" class="w-full h-full object-cover">
                                     @else
-                                        <div class="w-full h-full flex items-center justify-center text-xs font-bold text-white">{{ strtoupper(substr($artist->name, 0, 2)) }}</div>
+                                        {{ strtoupper(substr($artist->name, 0, 3)) }}
                                     @endif
                                 </div>
                                 <span class="font-medium text-white">{{ $artist->name }}</span>
@@ -262,10 +262,10 @@
                         @foreach($artists as $artist)
                         <button onclick="filterMerch('{{ $artist->id }}')" class="artist-pill flex flex-col items-center gap-1 flex-shrink-0 group">
                             <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-enzzie-border group-hover:border-white/40 transition-colors" style="background-color: #1e1e1e">
-                                @if($artist->image)
-                                <img src="{{ asset('storage/'.$artist->image) }}" alt="{{ $artist->name }}" class="w-full h-full object-cover">
+                                @if($artist->avatar || $artist->image)
+                                    <img src="{{ asset('storage/' . ($artist->avatar ?? $artist->image)) }}">
                                 @else
-                                <div class="w-full h-full flex items-center justify-center text-[10px] font-bold text-white">{{ strtoupper(substr($artist->name, 0, 2)) }}</div>
+                                    {{ strtoupper(substr($artist->name, 0, 2)) }}
                                 @endif
                             </div>
                             <span class="text-[10px] text-gray-500 group-hover:text-gray-300 transition-colors max-w-[52px] truncate text-center">{{ strtoupper($artist->name) }}</span>

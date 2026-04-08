@@ -156,82 +156,90 @@
                     Lihat Merch
                 </a>
             </div>
-            @else
+          @else
+
+            <form action="{{ route('user.order.checkout') }}" method="GET">
             <div class="flex flex-col lg:flex-row gap-6">
 
-                <!-- Cart items -->
-                <div class="flex-1 space-y-3 fade-up">
+                <!-- LEFT: CART ITEMS -->
+                <div class="flex-1 space-y-3">
+
+                    <!-- Pilih Semua -->
+                    <div class="flex items-center gap-2 px-1 mb-2">
+                        <input type="checkbox" id="checkAll" class="w-4 h-4 accent-red-500"
+                            onclick="toggleAll(this)">
+                        <label for="checkAll" class="text-sm text-gray-400 cursor-pointer">Pilih Semua</label>
+                    </div>
+
                     @foreach($cartItems as $item)
                     <div class="cart-item p-4 flex items-center gap-4">
+
+                        <!-- CHECKBOX -->
+                        <input type="checkbox"
+                            name="selected_ids[]"
+                            value="{{ $item['merch']->id }}"
+                            class="item-checkbox w-4 h-4 accent-red-500">
+
                         <!-- Gambar -->
-                        <div class="w-20 h-20 rounded-xl overflow-hidden bg-enzzie-border flex-shrink-0">
-                            @if($item['merch']->foto)
-                                <img src="{{ asset('storage/'.$item['merch']->foto) }}" alt="{{ $item['merch']->nama }}" class="w-full h-full object-cover">
-                            @else
-                                <div class="w-full h-full flex items-center justify-center text-2xl">👕</div>
-                            @endif
+                        <div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                            <img src="{{ asset('storage/'.$item['merch']->foto) }}"
+                                 class="w-full h-full object-cover">
                         </div>
 
                         <!-- Info -->
                         <div class="flex-1 min-w-0">
-                            <p class="text-xs text-gray-500 mb-0.5">{{ $item['merch']->artist->name ?? '' }}</p>
-                            <p class="text-sm font-bold truncate">{{ $item['merch']->nama }}</p>
-                            <p class="text-sm text-gray-300 mt-0.5">Rp {{ number_format($item['merch']->harga, 0, ',', '.') }}</p>
+                            <p class="font-bold truncate">{{ $item['merch']->nama }}</p>
+                            <p class="text-sm text-gray-400">
+                                Rp {{ number_format($item['merch']->harga, 0, ',', '.') }}
+                            </p>
+                            <p class="text-xs text-gray-500">Qty: {{ $item['qty'] }}</p>
                         </div>
 
-                        <!-- Qty update -->
-                        <div class="flex flex-col items-end gap-2 flex-shrink-0">
-                            <form method="POST" action="{{ route('user.cart.update', $item['merch']->id) }}" class="flex items-center gap-2">
-                                @csrf @method('PATCH')
-                                <button type="submit" name="qty" value="{{ max(1, $item['qty'] - 1) }}" class="qty-btn">−</button>
-                                <span class="text-sm font-bold w-5 text-center">{{ $item['qty'] }}</span>
-                                <button type="submit" name="qty" value="{{ $item['qty'] + 1 }}" class="qty-btn">+</button>
-                            </form>
-                            <p class="text-sm font-bold text-white">Rp {{ number_format($item['subtotal'], 0, ',', '.') }}</p>
-                            <form method="POST" action="{{ route('user.cart.remove', $item['merch']->id) }}">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="text-xs text-gray-600 hover:text-red-400 transition-colors">Hapus</button>
-                            </form>
-                        </div>
+                        <!-- Subtotal -->
+                        <p class="text-sm font-bold flex-shrink-0">
+                            Rp {{ number_format($item['subtotal'], 0, ',', '.') }}
+                        </p>
+
                     </div>
                     @endforeach
+
                 </div>
 
-                <!-- Summary -->
-                <div class="w-full lg:w-72 flex-shrink-0">
-                    <div class="bg-enzzie-card border border-enzzie-border rounded-2xl p-5 sticky top-24 fade-up">
-                        <p class="text-sm font-bold uppercase tracking-wider mb-4">Ringkasan</p>
-
-                        <div class="space-y-2 mb-4">
-                            @foreach($cartItems as $item)
-                            <div class="flex justify-between text-xs text-gray-400">
-                                <span class="truncate max-w-[140px]">{{ $item['merch']->nama }} ×{{ $item['qty'] }}</span>
-                                <span>Rp {{ number_format($item['subtotal'], 0, ',', '.') }}</span>
-                            </div>
-                            @endforeach
-                        </div>
-
-                        <div class="border-t border-enzzie-border pt-3 mb-5">
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm font-semibold text-gray-400">Total</span>
-                                <span class="text-lg font-black text-white">Rp {{ number_format($total, 0, ',', '.') }}</span>
-                            </div>
-                        </div>
-
-                        <a href="{{ route('user.order.checkout') }}"
-                           class="block w-full py-3 bg-white text-black text-sm font-bold text-center rounded-xl hover:bg-gray-100 transition-colors">
+                <!-- RIGHT: SUMMARY -->
+                <div class="w-full lg:w-72">
+                    <div class="bg-gray-800 p-5 rounded-xl sticky top-24">
+                        <p class="text-xs text-gray-500 mb-1">Total Keranjang</p>
+                        <p class="text-lg font-bold mb-1">
+                            Rp {{ number_format($total, 0, ',', '.') }}
+                        </p>
+                        <p class="text-xs text-gray-500 mb-4">*Centang item yang ingin di-checkout</p>
+                        <button type="submit"
+                            class="w-full py-3 bg-white text-black font-bold rounded-xl hover:bg-gray-100 transition-colors">
                             Checkout →
-                        </a>
+                        </button>
                     </div>
                 </div>
 
             </div>
+            </form>
+
             @endif
-        </main>
-    </div>
-</div>
 
 <script>
+function openSidebar()  { document.getElementById('sidebar').classList.remove('-translate-x-full'); document.getElementById('sidebar-overlay').classList.add('active'); }
+function closeSidebar() { document.getElementById('sidebar').classList.add('-translate-x-full'); document.getElementById('sidebar-overlay').classList.remove('active'); }
+function toggleAll(source) {
+    document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = source.checked);
+}
+
+document.querySelectorAll('.item-checkbox').forEach(cb => {
+    cb.addEventListener('change', () => {
+        const all  = document.querySelectorAll('.item-checkbox');
+        const checked = document.querySelectorAll('.item-checkbox:checked');
+        document.getElementById('checkAll').checked = all.length === checked.length;
+    });
+});
+
 function openSidebar()  { document.getElementById('sidebar').classList.remove('-translate-x-full'); document.getElementById('sidebar-overlay').classList.add('active'); }
 function closeSidebar() { document.getElementById('sidebar').classList.add('-translate-x-full'); document.getElementById('sidebar-overlay').classList.remove('active'); }
 </script>

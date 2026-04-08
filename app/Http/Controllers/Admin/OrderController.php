@@ -18,7 +18,7 @@ class OrderController extends Controller
     {
         $order = Order::findOrFail($id);
         $order->load('items');
-        
+
         return response()->json([
             'id'                => $order->id,
             'no_pesanan'        => $order->no_pesanan,
@@ -30,12 +30,22 @@ class OrderController extends Controller
             'status_label'      => $order->status_label,
             'metode_pembayaran' => $order->metode_pembayaran,
             'tanggal'           => $order->created_at->format('Y-m-d H:i'),
+            'alamat_lengkap'    => $order->alamat_lengkap,
+            'kota'              => $order->kota,
+            'kode_pos'          => $order->kode_pos,
             'items'             => $order->items->map(fn($item) => [
                 'nama'   => $item->nama_produk,
-                'gambar' => $item->gambar ? asset('storage/' . $item->gambar) : null, // fix di sini
+                'gambar' => $item->gambar ? asset('storage/' . $item->gambar) : null,
                 'qty'    => $item->qty,
                 'harga'  => $item->harga_rupiah,
             ]),
         ]);
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate(['status' => 'required|in:pending,dikemas,dikirim,selesai']);
+        Order::findOrFail($id)->update(['status' => $request->status]);
+        return response()->json(['success' => true]);
     }
 }

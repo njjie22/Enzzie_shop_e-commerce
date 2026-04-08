@@ -54,6 +54,7 @@
 
 <div id="sidebar-overlay" onclick="closeSidebar()"></div>
 
+<!-- SEARCH MODAL -->
 <div id="searchModal" onclick="closeSearchModal(event)">
     <div class="modal-box">
         <div class="flex items-center gap-3 px-4 py-3 border-b border-enzzie-border">
@@ -64,22 +65,27 @@
             </button>
         </div>
         <div class="overflow-y-auto flex-1">
-            <tbody id="artistSearchBody">
+            <div id="artistSearchBody">
                 @foreach($allArtists as $a)
                 <div class="artist-row flex items-center justify-between px-4 py-3 cursor-pointer border-t border-enzzie-border/50 transition-colors"
                      data-name="{{ strtolower($a->name) }}"
-                     onclick="window.location='{{ route('user.more.show', $a->id) }}'">
+                     onclick="window.location='{{ route('user.more.show', $a->slug) }}'">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-enzzie-border bg-enzzie-card">
-                            @if($a->image) <img src="{{ asset('storage/'.$a->image) }}" alt="{{ $a->name }}" class="w-full h-full object-cover">
-                            @else <div class="w-full h-full flex items-center justify-center text-xs font-bold text-white">{{ strtoupper(substr($a->name, 0, 2)) }}</div> @endif
+                            @if($a->avatar || $a->image)
+                                <img src="{{ asset('storage/' . ($a->avatar ?? $a->image)) }}" class="w-full h-full object-cover" alt="{{ $a->name }}">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center text-xs font-bold text-white">
+                                    {{ strtoupper(substr($a->name, 0, 2)) }}
+                                </div>
+                            @endif
                         </div>
                         <span class="text-sm font-medium text-white">{{ $a->name }}</span>
                     </div>
                     <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </div>
                 @endforeach
-            </tbody>
+            </div>
             <div id="artistSearchEmpty" class="hidden py-10 text-center text-gray-600 text-sm">Artis tidak ditemukan.</div>
         </div>
     </div>
@@ -87,7 +93,7 @@
 
 <div class="flex min-h-screen">
 
-    <!-- SIDEBAR — sticky, tidak ikut scroll -->
+    <!-- SIDEBAR -->
     <aside id="sidebar"
            class="fixed top-0 left-0 h-full z-40 flex flex-col bg-enzzie-dark border-r border-enzzie-border
                   w-72 lg:w-64 xl:w-72 -translate-x-full lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen">
@@ -117,13 +123,20 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     Search Artis
                 </button>
+
+                {{-- FIX: Loop $allArtists, gunakan $a->avatar (bukan $artist->avatar) dan slug untuk route --}}
                 @foreach($allArtists as $a)
-                <a href="{{ route('user.more.show', $a->id) }}"
+                <a href="{{ route('user.more.show', $a->slug) }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors mb-0.5
                           {{ $a->id === $artist->id ? 'bg-white/10 border border-white/10' : 'text-gray-300 hover:text-white hover:bg-white/5' }}">
                     <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-enzzie-border bg-enzzie-card">
-                        @if($a->image) <img src="{{ asset('storage/'.$a->image) }}" alt="{{ $a->name }}" class="w-full h-full object-cover">
-                        @else <div class="w-full h-full flex items-center justify-center text-xs font-bold text-gray-400">{{ strtoupper(substr($a->name, 0, 2)) }}</div> @endif
+                        @if($a->avatar || $a->image)
+                            <img src="{{ asset('storage/' . ($a->avatar ?? $a->image)) }}" class="w-full h-full object-cover" alt="{{ $a->name }}">
+                        @else
+                            <div class="w-full h-full flex items-center justify-center text-xs font-bold text-white">
+                                {{ strtoupper(substr($a->name, 0, 2)) }}
+                            </div>
+                        @endif
                     </div>
                     <span class="text-sm truncate {{ $a->id === $artist->id ? 'font-bold text-white' : 'font-medium' }}">{{ strtoupper($a->name) }}</span>
                 </a>
@@ -138,7 +151,7 @@
                     <span class="text-sm font-medium">Aktivitas Belanja</span>
                 </a>
             </div>
-            <!-- USER + LOGOUT di bawah Shop -->
+            <!-- USER + LOGOUT -->
             <div class="mt-4 px-5 pb-4">
                 <div class="flex items-center gap-3 px-3 py-2.5 rounded-lg">
                     <div class="w-8 h-8 rounded-full bg-gradient-to-br from-enzzie-red to-orange-500 flex items-center justify-center text-xs font-bold flex-shrink-0">
@@ -193,14 +206,19 @@
                 <div id="bannerTrack" style="height:300px">
                     @foreach($banners as $banner)
                     <div class="banner-slide relative" style="height:300px">
-                        @if($banner->image) <img src="{{ asset('storage/'.$banner->image) }}" alt="{{ $banner->title }}" class="w-full h-full object-cover">
-                        @else <div class="w-full h-full bg-enzzie-card"></div> @endif
+                        @if($banner->image)
+                            <img src="{{ asset('storage/'.$banner->image) }}" alt="{{ $banner->title }}" class="w-full h-full object-cover">
+                        @else
+                            <div class="w-full h-full bg-enzzie-card"></div>
+                        @endif
                         <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div class="absolute bottom-0 left-0 p-5">
                             <p class="text-xs text-gray-300 uppercase tracking-widest mb-1">{{ $artist->name }}</p>
                             <h2 class="text-white font-black text-xl leading-tight">{{ $banner->title }}</h2>
-                            @if(isset($banner->subtitle) && $banner->subtitle) <p class="text-sm text-gray-300 mt-1">{{ $banner->subtitle }}</p> @endif
+                            @if(isset($banner->subtitle) && $banner->subtitle)
+                                <p class="text-sm text-gray-300 mt-1">{{ $banner->subtitle }}</p>
+                            @endif
                         </div>
                     </div>
                     @endforeach
@@ -220,8 +238,13 @@
                 <div class="relative h-full flex items-end p-5">
                     <div class="flex items-center gap-4">
                         <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-white/20 bg-enzzie-dark">
-                            @if($artist->image) <img src="{{ asset('storage/'.$artist->image) }}" alt="{{ $artist->name }}" class="w-full h-full object-cover">
-                            @else <div class="w-full h-full flex items-center justify-center text-xl font-black text-enzzie-red">{{ strtoupper(substr($artist->name, 0, 1)) }}</div> @endif
+                            @if($artist->avatar || $artist->image)
+                                <img src="{{ asset('storage/' . ($artist->avatar ?? $artist->image)) }}" class="w-full h-full object-cover" alt="{{ $artist->name }}">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center text-xs font-bold text-white">
+                                    {{ strtoupper(substr($artist->name, 0, 2)) }}
+                                </div>
+                            @endif
                         </div>
                         <div>
                             <p class="text-xs text-gray-500 uppercase tracking-widest mb-0.5">Artis</p>
@@ -247,8 +270,11 @@
                         @foreach($merches->flatten() as $merch)
                         <div class="merch-card fade-up" data-kat="{{ $merch->kategori }}" onclick="window.location='{{ route('user.merch.show', $merch->id) }}'">
                             <div class="merch-img-wrap">
-                                @if($merch->foto_url) <img src="{{ $merch->foto_url }}" alt="{{ $merch->nama }}" class="merch-img" loading="lazy">
-                                @else <div class="merch-placeholder">👕</div> @endif
+                                @if($merch->foto_url)
+                                    <img src="{{ $merch->foto_url }}" alt="{{ $merch->nama }}" class="merch-img" loading="lazy">
+                                @else
+                                    <div class="merch-placeholder">👕</div>
+                                @endif
                             </div>
                             <div class="p-3">
                                 <p class="text-sm font-semibold text-white truncate mb-0.5">{{ $merch->nama }}</p>
@@ -283,12 +309,22 @@ function closeSidebar() { document.getElementById('sidebar').classList.add('-tra
 function openSearchModal() { document.getElementById('searchModal').classList.add('active'); setTimeout(() => document.getElementById('artistSearchInput').focus(), 100); }
 function closeSearchModal(e) { if (!e || e.target === document.getElementById('searchModal')) { document.getElementById('searchModal').classList.remove('active'); document.getElementById('artistSearchInput').value = ''; filterArtistSearch(''); } }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSearchModal(); });
-function filterArtistSearch(q) { const rows = document.querySelectorAll('#artistSearchBody > div'); let v = 0; rows.forEach(r => { const s = !q || r.dataset.name.includes(q.toLowerCase()); r.style.display = s ? '' : 'none'; if(s) v++; }); document.getElementById('artistSearchEmpty').classList.toggle('hidden', v > 0); }
+function filterArtistSearch(q) {
+    const rows = document.querySelectorAll('#artistSearchBody > div');
+    let v = 0;
+    rows.forEach(r => { const s = !q || r.dataset.name.includes(q.toLowerCase()); r.style.display = s ? '' : 'none'; if(s) v++; });
+    document.getElementById('artistSearchEmpty').classList.toggle('hidden', v > 0);
+}
 
 let bannerIdx = 0;
 const bannerEls = document.querySelectorAll('.banner-slide');
 const bannerTot = bannerEls.length;
-function moveBanner(dir) { bannerIdx = (bannerIdx + dir + bannerTot) % bannerTot; document.getElementById('bannerTrack').style.transform = 'translateX(-' + (bannerIdx * 100) + '%)'; const c = document.getElementById('bannerCounter'); if (c) c.textContent = (bannerIdx + 1) + ' | ' + bannerTot; }
+function moveBanner(dir) {
+    bannerIdx = (bannerIdx + dir + bannerTot) % bannerTot;
+    document.getElementById('bannerTrack').style.transform = 'translateX(-' + (bannerIdx * 100) + '%)';
+    const c = document.getElementById('bannerCounter');
+    if (c) c.textContent = (bannerIdx + 1) + ' | ' + bannerTot;
+}
 if (bannerTot > 1) setInterval(() => moveBanner(1), 4500);
 
 function filterKat(kat, btn) {

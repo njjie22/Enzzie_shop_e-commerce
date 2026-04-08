@@ -181,6 +181,24 @@
                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
                 <span class="nav-label">Merch</span>
             </a>
+            <!-- USER + LOGOUT -->
+            <div class="mt-4 px-5 pb-4">
+                <div class="flex items-center gap-3 px-3 py-2.5 rounded-lg">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-enzzie-red to-orange-500 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate">{{ auth()->user()->name }}</p>
+                        <p class="text-xs text-gray-500 truncate">{{ auth()->user()->email }}</p>
+                    </div>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="text-gray-600 hover:text-gray-400 transition-colors" title="Logout">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
         </nav>
     </aside>
 
@@ -277,7 +295,7 @@
     </main>
 
     <!-- OVERLAY -->
-    <div id="overlay" class="hidden fixed inset-0 bg-black/50 z-[150] backdrop-blur-[2px]" onclick="overlayClick()"></div>
+    <div id="overlay" class="hidden fixed inset-0 bg-black/50 z-[150] " onclick="overlayClick()"></div>
 
     <!-- MODAL -->
     <div id="tambahPanel" class="hidden">

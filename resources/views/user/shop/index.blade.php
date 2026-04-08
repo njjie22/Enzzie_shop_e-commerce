@@ -178,9 +178,22 @@
                 <div class="flex flex-col lg:flex-row gap-6">
                     <!-- Items -->
                     <div class="flex-1 space-y-3">
+                        <div class="flex items-center gap-2 px-1 mb-2">
+                            <input type="checkbox" id="selectAll" class="w-4 h-4 accent-red-500 rounded" onchange="toggleAll(this)" checked>
+                            <label for="selectAll" class="text-sm font-semibold text-gray-400 cursor-pointer select-none">Pilih Semua</label>
+                        </div>
                         @foreach($cartItems as $item)
                         <div class="cart-item p-4 flex items-center gap-4">
-                            <div class="w-20 h-20 rounded-xl overflow-hidden bg-enzzie-border flex-shrink-0">
+                            <!-- CHECKBOX -->
+                            <input type="checkbox"
+                                form="checkoutForm"
+                                name="selected_ids[]"
+                                value="{{ $item['merch']->id }}"
+                                class="item-checkbox w-4 h-4 accent-red-500 rounded flex-shrink-0 cursor-pointer"
+                                onchange="updateSummary()"
+                                checked>
+
+                            <div class="w-20 h-20 rounded-xl overflow-hidden bg-enzzie-border flex-shrink-0 cursor-pointer" onclick="this.previousElementSibling.click()">
                                 @if($item['merch']->foto)
                                     <img src="{{ asset('storage/'.$item['merch']->foto) }}" alt="{{ $item['merch']->nama }}" class="w-full h-full object-cover">
                                 @else
@@ -208,41 +221,36 @@
                         </div>
                         @endforeach
                     </div>
-
-                    <!-- Summary -->
+                    <!-- summary -->
+                   
                     <div class="w-full lg:w-72 flex-shrink-0">
                         <div class="bg-enzzie-card border border-enzzie-border rounded-2xl p-5 sticky top-24">
-                            <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center justify-between mb-4 border-b border-enzzie-border pb-4">
                                 <p class="text-sm font-bold uppercase tracking-wider">Ringkasan</p>
                                 <form method="POST" action="{{ route('user.cart.clear') }}">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="text-xs text-gray-600 hover:text-red-400 transition-colors">Kosongkan</button>
+                                    <button type="submit" class="text-xs text-gray-600 hover:text-red-400 transition-colors">Kosongkan Semua</button>
                                 </form>
                             </div>
-                            <div class="space-y-2 mb-4">
-                                @foreach($cartItems as $item)
-                                <div class="flex justify-between text-xs text-gray-400">
-                                    <span class="truncate max-w-[140px]">{{ $item['merch']->nama }} ×{{ $item['qty'] }}</span>
-                                    <span>Rp {{ number_format($item['subtotal'], 0, ',', '.') }}</span>
-                                </div>
-                                @endforeach
-                            </div>
-                            <div class="border-t border-enzzie-border pt-3 mb-5">
+                            <div class="pt-1 mb-5">
                                 <div class="flex justify-between items-center">
                                     <span class="text-sm font-semibold text-gray-400">Total</span>
-                                    <span class="text-lg font-black text-white">Rp {{ number_format($total, 0, ',', '.') }}</span>
+                                    <span id="totalDisplay" class="text-lg font-black text-white">
+                                        Rp {{ number_format($total, 0, ',', '.') }}
+                                    </span>
                                 </div>
                             </div>
-                            <a href="{{ route('user.order.checkout') }}"
-                               class="block w-full py-3 bg-white text-black text-sm font-bold text-center rounded-xl hover:bg-gray-100 transition-colors">
-                                Checkout →
-                            </a>
+                            <form method="GET" action="{{ route('user.order.checkout') }}" id="checkoutForm">
+                                <button type="submit"
+                                    class="block w-full py-3 bg-white text-black text-sm font-bold text-center rounded-xl hover:bg-gray-100 transition-colors">
+                                    Checkout →
+                                </button>
+                            </form>
                         </div>
                     </div>
-                </div>
-                @endif
-            </div>
-
+                    </div> {{-- tutup flex-col lg:flex-row --}}
+                @endif {{-- tutup @else keranjang --}}
+            </div> {{-- tutup #tab-keranjang --}}
             <!-- TAB PESANAN -->
             <div id="tab-pesanan" class="hidden fade-up">
                 @if($orders->isEmpty())
@@ -347,6 +355,30 @@ function switchTab(name, btn) {
     btn.classList.add('active');
     requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo(0, scrollY)));
 }
-</script>
-</body>
+
+        // Data harga per item untuk kalkulasi total dinamis
+        const itemPrices = {
+            @foreach($cartItems as $item)
+            {{ $item['merch']->id }}: {{ $item['subtotal'] }},
+            @endforeach
+        };
+
+        function updateSummary() {
+            const checkboxes = document.querySelectorAll('.item-checkbox:checked');
+            let total = 0;
+            checkboxes.forEach(cb => {
+                total += itemPrices[cb.value] || 0;
+            });
+            document.getElementById('totalDisplay').textContent =
+                'Rp ' + total.toLocaleString('id-ID');
+        }
+
+        function toggleAll(master) {
+            document.querySelectorAll('.item-checkbox').forEach(cb => {
+                cb.checked = master.checked;
+            });
+            updateSummary();
+        }
+        </script>
+        </body>
 </html>

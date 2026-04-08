@@ -186,6 +186,24 @@
                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
                 <span class="sidebar-label whitespace-nowrap">Merch</span>
             </a>
+            <!-- USER + LOGOUT -->
+            <div class="mt-4 px-5 pb-4">
+                <div class="flex items-center gap-3 px-3 py-2.5 rounded-lg">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-enzzie-red to-orange-500 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate">{{ auth()->user()->name }}</p>
+                        <p class="text-xs text-gray-500 truncate">{{ auth()->user()->email }}</p>
+                    </div>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="text-gray-600 hover:text-gray-400 transition-colors" title="Logout">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
         </nav>
     </aside>
 
@@ -335,7 +353,24 @@
                                 <strong id="rincian-total" class="text-[0.86rem] text-[#f0f0f0]">—</strong>
                             </div>
                         </div>
-
+                        <!-- ALAMAT PENGIRIMAN -->
+                        <div class="bg-[#2e2e2e] border border-[#3a3a3a] rounded-lg p-3.5">
+                            <div class="font-['Syne'] text-[0.82rem] font-bold mb-3 text-[#f0f0f0]">Alamat Pengiriman</div>
+                            <div class="mb-2.5">
+                                <div class="text-[0.67rem] font-bold text-[#c0392b] uppercase tracking-wider mb-0.5">Alamat Lengkap</div>
+                                <div id="rincian-alamat" class="text-[0.82rem] text-[#f0f0f0] leading-relaxed">—</div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <div class="text-[0.67rem] font-bold text-[#c0392b] uppercase tracking-wider mb-0.5">Kota</div>
+                                    <div id="rincian-kota" class="text-[0.82rem] text-[#f0f0f0] leading-relaxed">—</div>
+                                </div>
+                                <div>
+                                    <div class="text-[0.67rem] font-bold text-[#c0392b] uppercase tracking-wider mb-0.5">Kode Pos</div>
+                                    <div id="rincian-kode-pos" class="text-[0.82rem] text-[#f0f0f0] leading-relaxed">—</div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- META -->
                         <div class="bg-[#2e2e2e] border border-[#3a3a3a] rounded-lg overflow-hidden">
                             <div class="p-2.5 flex items-center justify-between border-b border-[#3a3a3a] gap-2.5">
@@ -474,6 +509,9 @@
             document.getElementById('rincian-total').textContent     = data.total               ?? '—';
             document.getElementById('rincian-metode').textContent    = data.metode_pembayaran   ?? '—';
             document.getElementById('noPesanan').textContent         = data.no_pesanan          ?? '—';
+            document.getElementById('rincian-alamat').textContent    = data.alamat_lengkap      ?? '—';
+            document.getElementById('rincian-kota').textContent      = data.kota                ?? '—';
+            document.getElementById('rincian-kode-pos').textContent  = data.kode_pos            ?? '—';
 
             const container = document.getElementById('merch-items-container');
             container.innerHTML = (data.items ?? []).map(item => `

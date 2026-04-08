@@ -347,21 +347,25 @@
                                     keranjang
                                 </button>
                             </form>
-                            <form method="POST" action="{{ route('user.cart.add') }}" class="flex-1">
-                                @csrf
-                                <input type="hidden" name="merch_id" value="{{ $merch->id }}">
-                                <input type="hidden" name="qty" id="buyQty" value="1">
-                                <input type="hidden" name="redirect_checkout" value="1">
-                                <button type="submit"
-                                        class="w-full py-3 rounded-xl text-sm font-bold bg-white text-black hover:bg-gray-100 transition-colors">
-                                    pembelian
-                                </button>
-                            </form>
+                            <form method="POST" action="{{ route('user.order.buy-now') }}" class="flex-1">
+                            @csrf
+                            <input type="hidden" name="merch_id" value="{{ $merch->id }}">
+                            <input type="hidden" name="qty" id="buyQty" value="1">
+                            <button type="submit"
+                                    class="w-full py-3 rounded-xl text-sm font-bold bg-white text-black hover:bg-gray-100 transition-colors">
+                                pembelian
+                            </button>
+                        </form>
                         </div>
                         @else
                         <div class="flex gap-3">
                             <button disabled class="flex-1 py-3 rounded-xl border border-enzzie-border text-sm font-bold bg-enzzie-card text-gray-600 cursor-not-allowed">keranjang</button>
-                            <button disabled class="flex-1 py-3 rounded-xl text-sm font-bold bg-gray-700 text-gray-500 cursor-not-allowed">pembelian</button>
+                            <form method="POST" action="{{ route('user.order.buy-now') }}">
+                            @csrf
+                            <input type="hidden" name="merch_id" value="{{ $merch->id }}">
+                            <input type="hidden" name="qty" value="1">
+                            <button type="submit" class="...">Beli Sekarang</button>
+                        </form>
                         </div>
                         <p class="text-xs text-red-400 text-center mt-2">Stok habis, tidak dapat memesan saat ini.</p>
                         @endif

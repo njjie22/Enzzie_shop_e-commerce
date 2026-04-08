@@ -241,6 +241,25 @@
             </svg>
             <span class="sidebar-label">Merch</span>
         </a>
+        
+        <!-- USER + LOGOUT -->
+            <div class="mt-4 px-5 pb-4">
+                <div class="flex items-center gap-3 px-3 py-2.5 rounded-lg">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-enzzie-red to-orange-500 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate">{{ auth()->user()->name }}</p>
+                        <p class="text-xs text-gray-500 truncate">{{ auth()->user()->email }}</p>
+                    </div>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="text-gray-600 hover:text-gray-400 transition-colors" title="Logout">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
     </nav>
 </aside>
 
@@ -310,8 +329,8 @@
                 <div class="artis-chip flex flex-col items-center gap-1.5 cursor-pointer flex-shrink-0"
                      onclick="filterMerch('{{ $artist->slug ?? strtolower(str_replace(' ','-',$artist->name)) }}', this)">
                     <div class="artis-avatar w-[50px] h-[50px] rounded-full border-2 border-border2 overflow-hidden flex items-center justify-center font-bold text-[0.62rem] text-text1 bg-bg3 transition-all duration-200">
-                        @if($artist->image)
-                            <img src="{{ asset('storage/' . $artist->image) }}" alt="{{ $artist->name }}" class="w-full h-full object-cover block">
+                        @if($artist->avatar)
+                            <img src="{{ asset('storage/' . $artist->avatar) }}" alt="{{ $artist->name }}" class="w-full h-full object-cover block">
                         @else
                             {{ strtoupper(substr($artist->name, 0, 3)) }}
                         @endif
@@ -321,6 +340,8 @@
                 @endforeach
             </div>
         </div>
+
+        <!-- ARTIS TABLE -->
 
         <!-- ARTIS TABLE -->
         <div id="artisTableSection" class="hidden mt-3.5">
@@ -347,25 +368,26 @@
                             <tr class="hover:[&>td]:bg-white/[0.02] border-t border-border1" id="artis-row-{{ $artist->id }}">
                                 <td class="px-3.5 py-2.5 text-[0.82rem] text-text2 align-middle">{{ $i + 1 }}</td>
                                 <td class="px-3.5 py-2.5 text-[0.82rem] text-text2 align-middle font-medium text-text1">{{ $artist->name }}</td>
-                                <td class="px-3.5 py-2.5 text-[0.82rem] text-text2 align-middle">
-                                    <div class="w-[30px] h-[30px] rounded-full overflow-hidden flex items-center justify-center text-[0.6rem] font-bold bg-bg3">
-                                        @if($artist->image)
-                                            <img src="{{ asset('storage/' . $artist->image) }}" alt="" class="w-full h-full object-cover">
-                                        @else
-                                            {{ strtoupper(substr($artist->name, 0, 3)) }}
-                                        @endif
-                                    </div>
-                                </td>
-                                <td class="px-3.5 py-2.5 text-[0.82rem] text-text2 align-middle">
-                                    <div class="flex gap-1.5">
-                                        <button
-                                            onclick="openEditArtis({{ $artist->id }}, '{{ addslashes($artist->name) }}', '{{ $artist->image ? asset('storage/' . $artist->image) : '' }}')"
-                                            class="inline-flex items-center px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold bg-bg4 text-text2 border border-border2 hover:bg-border2 hover:text-text1 transition-all duration-150 cursor-pointer">✏ Edit</button>
-                                        <button
-                                            onclick="hapusArtis({{ $artist->id }}, '{{ addslashes($artist->name) }}')"
-                                            class="inline-flex items-center px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold bg-danger/[0.12] text-danger border border-danger/25 hover:bg-danger/[0.22] transition-all duration-150 cursor-pointer">🗑 Hapus</button>
-                                    </div>
-                                </td>
+                               <td class="px-3.5 py-2.5 text-[0.82rem] text-text2 align-middle">
+                                <div class="w-[30px] h-[30px] rounded-full overflow-hidden flex items-center justify-center text-[0.6rem] font-bold bg-bg3">
+                                    @if($artist->avatar || $artist->image)
+                                        <img src="{{ asset('storage/' . ($artist->avatar ?? $artist->image)) }}" class="w-full h-full object-cover">
+                                    @else
+                                        {{ strtoupper(substr($artist->name, 0, 3)) }}
+                                    @endif
+                                </div>
+                            </td>
+
+                            <td class="px-3.5 py-2.5 text-[0.82rem] text-text2 align-middle">
+                                <div class="flex gap-1.5">
+                                    <button
+                                        onclick="openEditArtis({{ $artist->id }},'{{ addslashes($artist->name) }}',{{ ($artist->avatar ?? $artist->image) ? asset('storage/' . ($artist->avatar ?? $artist->image)) : '' }})"
+                                        class="inline-flex items-center px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold bg-bg4 text-text2 border border-border2 hover:bg-border2 hover:text-text1 transition-all duration-150 cursor-pointer">✏ Edit</button>
+                                    <button
+                                        onclick="hapusArtis({{ $artist->id }}, '{{ addslashes($artist->name) }}')"
+                                        class="inline-flex items-center px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold bg-danger/[0.12] text-danger border border-danger/25 hover:bg-danger/[0.22] transition-all duration-150 cursor-pointer">🗑 Hapus</button>
+                                </div>
+                            </td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -375,25 +397,6 @@
         </div>
 
         <div class="h-px bg-border1 my-4"></div>
-
-        <!-- ── MERCH SECTION ── -->
-        <div class="flex items-start justify-between mb-2.5 gap-2.5 flex-wrap">
-            <div class="flex-1 min-w-0">
-                <div class="font-syne text-[0.72rem] font-bold tracking-[0.1em] uppercase text-muted mb-2">Merch</div>
-                <div class="flex gap-1.5 items-center" id="filterTabs"
-                     style="flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch;">
-                    <button class="filter-tab flex-shrink-0 px-3 py-[3px] rounded-full text-[0.7rem] font-semibold cursor-pointer border transition-all duration-150 active bg-accent text-white border-accent" data-filter="all">All</button>
-                    @foreach($artists as $artist)
-                    <button class="filter-tab flex-shrink-0 px-3 py-[3px] rounded-full text-[0.7rem] font-semibold cursor-pointer border border-border1 bg-transparent text-muted transition-all duration-150 hover:border-accent hover:text-accent"
-                            data-filter="{{ $artist->slug ?? strtolower(str_replace(' ','-',$artist->name)) }}">
-                        {{ $artist->name }}
-                    </button>
-                    @endforeach
-                </div>
-            </div>
-            <a href="{{ route('admin.merch') }}"
-               class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-accent text-white text-[0.75rem] font-semibold hover:bg-accentH transition-all duration-150 no-underline">+ Tambah Merch</a>
-        </div>
 
         <!-- Merch Grid -->
         <div class="merch-grid flex gap-2.5 overflow-x-auto pb-2" id="merchGrid">

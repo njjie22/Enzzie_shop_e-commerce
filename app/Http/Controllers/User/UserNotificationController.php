@@ -46,4 +46,5 @@ class UserNotificationController extends Controller
 
         return back()->with('success', 'Notifikasi dihapus.');
     }
+    
 }
