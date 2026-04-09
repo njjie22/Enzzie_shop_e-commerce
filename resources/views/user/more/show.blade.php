@@ -69,7 +69,7 @@
                 @foreach($allArtists as $a)
                 <div class="artist-row flex items-center justify-between px-4 py-3 cursor-pointer border-t border-enzzie-border/50 transition-colors"
                      data-name="{{ strtolower($a->name) }}"
-                     onclick="window.location='{{ route('user.more.show', $a->slug) }}'">
+                     onclick="window.location='{{ route('user.more.show', $a->id) }}'">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-enzzie-border bg-enzzie-card">
                             @if($a->foto_url)
@@ -126,7 +126,7 @@
 
                 {{-- FIX: Loop $allArtists, gunakan $a->avatar (bukan $artist->avatar) dan slug untuk route --}}
                 @foreach($allArtists as $a)
-                <a href="{{ route('user.more.show', $a->slug) }}"
+                <a href="{{ route('user.more.show', $a->id) }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors mb-0.5
                           {{ $a->id === $artist->id ? 'bg-white/10 border border-white/10' : 'text-gray-300 hover:text-white hover:bg-white/5' }}">
                     <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-enzzie-border bg-enzzie-card">
