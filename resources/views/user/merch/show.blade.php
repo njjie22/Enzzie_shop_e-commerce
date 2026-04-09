@@ -101,8 +101,8 @@
                      onclick="window.location='{{ route('user.more.show', $a->id) }}'">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-enzzie-border bg-enzzie-card">
-                            @if($a->image)
-                                <img src="{{ asset('storage/'.$a->image) }}" alt="{{ $a->name }}" class="w-full h-full object-cover">
+                            @if($a->foto_url)
+                                <img src="{{ $a->foto_url }}" alt="{{ $a->name }}" class="w-full h-full object-cover">
                             @else
                                 <div class="w-full h-full flex items-center justify-center text-xs font-bold text-white">
                                     {{ strtoupper(substr($a->name, 0, 2)) }}
@@ -165,8 +165,8 @@
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors mb-0.5
                           {{ $a->id === $merch->artist_id ? 'bg-white/10 border border-white/10' : 'text-gray-300 hover:text-white hover:bg-white/5' }}">
                     <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-enzzie-border bg-enzzie-card">
-                        @if($a->image)
-                            <img src="{{ asset('storage/'.$a->image) }}" alt="{{ $a->name }}" class="w-full h-full object-cover">
+                        @if($a->foto_url)
+                            <img src="{{ $a->foto_url }}" alt="{{ $a->name }}" class="w-full h-full object-cover">
                         @else
                             <div class="w-full h-full flex items-center justify-center text-xs font-bold text-gray-400">{{ strtoupper(substr($a->name, 0, 2)) }}</div>
                         @endif
@@ -254,7 +254,7 @@
                         <div class="aspect-square rounded-2xl overflow-hidden bg-enzzie-card border border-enzzie-border">
                             @if($merch->foto)
                                 <img id="mainImg"
-                                     src="{{ asset('storage/' . $merch->foto) }}"
+                                     src="{{ $merch->foto_url }}"
                                      alt="{{ $merch->nama }}"
                                      class="product-img-main w-full h-full object-cover">
                             @else
@@ -399,7 +399,7 @@
                         @if($merch->foto)
                         <div class="mb-6 flex justify-center">
                             <div class="w-full rounded-2xl overflow-hidden bg-enzzie-card border border-enzzie-border">
-                                <img src="{{ asset('storage/' . $merch->foto) }}"
+                                <img src="{{ $merch->foto_url }}"
                                      alt="{{ $merch->nama }}" class="w-full object-cover">
                             </div>
                         </div>
@@ -512,7 +512,7 @@
                         <div class="related-card" onclick="window.location='{{ route('user.merch.show', $r->id) }}'">
                             <div class="related-img-wrap">
                                 @if($r->foto)
-                                    <img src="{{ asset('storage/'.$r->foto) }}" alt="{{ $r->nama }}" class="related-img">
+                                    <img src="{{ $r->foto_url }}" alt="{{ $r->nama }}" class="related-img">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center text-3xl text-gray-700">👕</div>
                                 @endif

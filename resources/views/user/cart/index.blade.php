@@ -182,7 +182,7 @@
 
                         <!-- Gambar -->
                         <div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                            <img src="{{ asset('storage/'.$item['merch']->foto) }}"
+                            <img src="{{ $item['merch']->foto_url }}"
                                  class="w-full h-full object-cover">
                         </div>
 

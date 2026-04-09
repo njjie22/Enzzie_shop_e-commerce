@@ -20,5 +20,12 @@ class Banner extends Model
     {
         return $this->belongsTo(Artist::class);
     }
+
+    protected $appends = ['foto_url'];
+
+    public function getFotoUrlAttribute()
+    {
+        return $this->image ? asset('storage/' . $this->image) : null;
+    }
     
 }

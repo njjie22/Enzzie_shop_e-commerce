@@ -33,6 +33,8 @@ class Merch extends Model
         'tanggal_terbit' => 'date',
     ];
 
+    protected $appends = ['foto_url'];
+
     public function artist()
     {
         return $this->belongsTo(Artist::class, 'artist_id');

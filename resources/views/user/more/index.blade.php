@@ -87,8 +87,8 @@
                         <td class="px-4 py-3">
                             <div class="flex items-center gap-3">
                                 <div class="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-enzzie-border bg-enzzie-card">
-                                    @if($a->avatar || $a->image)
-                                        <img src="{{ asset('storage/' . ($a->avatar ?? $a->image)) }}" class="w-full h-full object-cover">
+                                    @if($a->foto_url)
+                                        <img src="{{ $a->foto_url }}" class="w-full h-full object-cover">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center text-xs font-bold text-white">
                                             {{ strtoupper(substr($a->name, 0, 2)) }}
@@ -145,8 +145,8 @@
                 @foreach($allArtists->take(3) as $a)
                 <a href="{{ route('user.more.show', $a->id) }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition-colors group">
                     <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-enzzie-border bg-enzzie-card">
-                        @if($a->avatar || $a->image)
-                            <img src="{{ asset('storage/' . ($a->avatar ?? $a->image)) }}" class="w-full h-full object-cover">
+                        @if($a->foto_url)
+                            <img src="{{ $a->foto_url }}" class="w-full h-full object-cover">
                         @else
                         <div class="w-full h-full flex items-center justify-center text-xs font-bold text-white">
                             {{ strtoupper(substr($a->name, 0, 2)) }}
@@ -215,7 +215,7 @@
                         <div class="flex-shrink-0 w-full flex" style="min-width:100%;min-height:160px">
                             <div class="w-2/5 relative overflow-hidden" style="min-height:160px">
                                 @if($banner->image)
-                                    <img src="{{ asset('storage/'.$banner->image) }}" alt="{{ $banner->title }}" class="w-full h-full object-cover absolute inset-0">
+                                    <img src="{{ $banner->foto_url }}" alt="{{ $banner->title }}" class="w-full h-full object-cover absolute inset-0">
                                 @else
                                     <div class="w-full h-full bg-enzzie-border absolute inset-0 flex items-center justify-center">
                                         <svg class="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -248,8 +248,8 @@
                         @foreach($allArtists as $a)
                         <a href="{{ route('user.more.show', $a->id) }}" class="flex flex-col items-center gap-1.5 flex-shrink-0 group">
                             <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-enzzie-border group-hover:border-enzzie-red transition-colors bg-enzzie-dark">
-                                @if($a->avatar || $a->image)
-                                    <img src="{{ asset('storage/' . ($a->avatar ?? $a->image)) }}" class="w-full h-full object-cover">
+                                @if($a->foto_url)
+                                    <img src="{{ $a->foto_url }}" class="w-full h-full object-cover">
                                 @else
                                 <div class="w-full h-full flex items-center justify-center text-xs font-bold text-white">
                                     {{ strtoupper(substr($a->name, 0, 2)) }}
@@ -272,8 +272,8 @@
                     @foreach($allArtists as $a)
                     <a href="{{ route('user.more.show', $a->id) }}" class="drop-item" data-name="{{ strtolower($a->name) }}">
                         <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-enzzie-card border border-enzzie-border">
-                            @if($a->avatar || $a->image)
-                                <img src="{{ asset('storage/' . ($a->avatar ?? $a->image)) }}" class="w-full h-full object-cover">
+                            @if($a->foto_url)
+                                <img src="{{ $a->foto_url }}" class="w-full h-full object-cover">
                             @else
                             <div class="w-full h-full flex items-center justify-center text-xs font-bold text-white">
                                 {{ strtoupper(substr($a->name, 0, 2)) }}
@@ -295,8 +295,8 @@
             <div class="artist-section fade-up" style="animation-delay: {{ $loop->index * 0.06 }}s">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-11 h-11 rounded-full overflow-hidden flex-shrink-0 border-2 border-enzzie-border bg-enzzie-card">
-                        @if($artist->avatar || $artist->image)
-                            <img src="{{ asset('storage/' . ($artist->avatar ?? $artist->image)) }}" class="w-full h-full object-cover">
+                        @if($artist->foto_url)
+                            <img src="{{ $artist->foto_url }}" class="w-full h-full object-cover">
                         @else
                         <div class="w-full h-full flex items-center justify-center text-xs font-bold text-white">
                             {{ strtoupper(substr($artist->name, 0, 2)) }}

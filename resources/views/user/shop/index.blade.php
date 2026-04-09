@@ -195,7 +195,7 @@
 
                             <div class="w-20 h-20 rounded-xl overflow-hidden bg-enzzie-border flex-shrink-0 cursor-pointer" onclick="this.previousElementSibling.click()">
                                 @if($item['merch']->foto)
-                                    <img src="{{ asset('storage/'.$item['merch']->foto) }}" alt="{{ $item['merch']->nama }}" class="w-full h-full object-cover">
+                                    <img src="{{ $item['merch']->foto_url }}" alt="{{ $item['merch']->nama }}" class="w-full h-full object-cover">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center text-2xl">👕</div>
                                 @endif
@@ -300,7 +300,7 @@
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-lg overflow-hidden bg-enzzie-border flex-shrink-0">
                                     @if($item->gambar)
-                                        <img src="{{ asset('storage/'.$item->gambar) }}" alt="{{ $item->nama_produk }}" class="w-full h-full object-cover">
+                                        <img src="{{ $item->foto_url }}" alt="{{ $item->nama_produk }}" class="w-full h-full object-cover">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center text-base">👕</div>
                                     @endif

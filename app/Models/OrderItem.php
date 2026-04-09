@@ -40,4 +40,11 @@ class OrderItem extends Model
     {
         return 'Rp. ' . number_format($this->harga_satuan, 0, ',', '.');
     }
+
+    protected $appends = ['foto_url'];
+
+    public function getFotoUrlAttribute()
+    {
+        return $this->gambar ? asset('storage/' . $this->gambar) : null;
+    }
 }

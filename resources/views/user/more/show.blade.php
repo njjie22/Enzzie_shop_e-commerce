@@ -72,8 +72,8 @@
                      onclick="window.location='{{ route('user.more.show', $a->slug) }}'">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-enzzie-border bg-enzzie-card">
-                            @if($a->avatar || $a->image)
-                                <img src="{{ asset('storage/' . ($a->avatar ?? $a->image)) }}" class="w-full h-full object-cover" alt="{{ $a->name }}">
+                            @if($a->foto_url)
+                                <img src="{{ $a->foto_url }}" class="w-full h-full object-cover" alt="{{ $a->name }}">
                             @else
                                 <div class="w-full h-full flex items-center justify-center text-xs font-bold text-white">
                                     {{ strtoupper(substr($a->name, 0, 2)) }}
@@ -130,8 +130,8 @@
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors mb-0.5
                           {{ $a->id === $artist->id ? 'bg-white/10 border border-white/10' : 'text-gray-300 hover:text-white hover:bg-white/5' }}">
                     <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-enzzie-border bg-enzzie-card">
-                        @if($a->avatar || $a->image)
-                            <img src="{{ asset('storage/' . ($a->avatar ?? $a->image)) }}" class="w-full h-full object-cover" alt="{{ $a->name }}">
+                        @if($a->foto_url)
+                            <img src="{{ $a->foto_url }}" class="w-full h-full object-cover" alt="{{ $a->name }}">
                         @else
                             <div class="w-full h-full flex items-center justify-center text-xs font-bold text-white">
                                 {{ strtoupper(substr($a->name, 0, 2)) }}
@@ -207,7 +207,7 @@
                     @foreach($banners as $banner)
                     <div class="banner-slide relative" style="height:300px">
                         @if($banner->image)
-                            <img src="{{ asset('storage/'.$banner->image) }}" alt="{{ $banner->title }}" class="w-full h-full object-cover">
+                            <img src="{{ $banner->foto_url }}" alt="{{ $banner->title }}" class="w-full h-full object-cover">
                         @else
                             <div class="w-full h-full bg-enzzie-card"></div>
                         @endif
@@ -238,8 +238,8 @@
                 <div class="relative h-full flex items-end p-5">
                     <div class="flex items-center gap-4">
                         <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-white/20 bg-enzzie-dark">
-                            @if($artist->avatar || $artist->image)
-                                <img src="{{ asset('storage/' . ($artist->avatar ?? $artist->image)) }}" class="w-full h-full object-cover" alt="{{ $artist->name }}">
+                            @if($artist->foto_url)
+                                <img src="{{ $artist->foto_url }}" class="w-full h-full object-cover" alt="{{ $artist->name }}">
                             @else
                                 <div class="w-full h-full flex items-center justify-center text-xs font-bold text-white">
                                     {{ strtoupper(substr($artist->name, 0, 2)) }}

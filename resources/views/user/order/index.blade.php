@@ -71,8 +71,8 @@
                 @foreach($artists->take(3) as $artist)
                 <a href="{{ route('user.artist.show', $artist->slug) }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition-colors group">
                     <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-enzzie-border" style="background-color: #1e1e1e">
-                        @if($artist->image)
-                            <img src="{{ asset('storage/'.$artist->image) }}" alt="{{ $artist->name }}" class="w-full h-full object-cover">
+                        @if($artist->foto_url)
+                            <img src="{{ $artist->foto_url }}" alt="{{ $artist->name }}" class="w-full h-full object-cover">
                         @else
                             <div class="w-full h-full flex items-center justify-center text-xs font-bold">{{ strtoupper(substr($artist->name, 0, 2)) }}</div>
                         @endif
@@ -196,7 +196,7 @@
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-lg overflow-hidden bg-enzzie-border flex-shrink-0">
                                 @if($item->gambar)
-                                    <img src="{{ asset('storage/'.$item->gambar) }}" alt="{{ $item->nama_produk }}" class="w-full h-full object-cover">
+                                    <img src="{{ $item->foto_url }}" alt="{{ $item->nama_produk }}" class="w-full h-full object-cover">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center text-base">👕</div>
                                 @endif

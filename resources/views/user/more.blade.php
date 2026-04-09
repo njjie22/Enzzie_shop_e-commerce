@@ -79,8 +79,8 @@
                 @foreach($artists->take(4) as $artist)
                 <a href="{{ route('user.artist.show', $artist->slug) }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition-colors group">
                     <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-enzzie-border bg-[#1e1e1e]">
-                         @if($artist->avatar)
-                            <img src="{{ asset('storage/'.$artist->avatar) }}" alt="{{ $artist->name }}" class="w-full h-full object-cover">
+                         @if($artist->foto_url)
+                            <img src="{{ $artist->foto_url }}" alt="{{ $artist->name }}" class="w-full h-full object-cover">
                         @else
                             <div class="w-full h-full flex items-center justify-center text-[10px] font-bold">{{ strtoupper(substr($artist->name, 0, 2)) }}</div>
                         @endif
@@ -141,7 +141,7 @@
                         </div>
                         <div class="relative z-10 w-full lg:w-1/2 h-full flex items-center justify-center">
                             @if($banner->image)
-                                <img src="{{ asset('storage/'.$banner->image) }}" class="max-h-full max-w-full object-contain drop-shadow-2xl">
+                                <img src="{{ $banner->foto_url }}" class="max-h-full max-w-full object-contain drop-shadow-2xl">
                             @endif
                         </div>
                         <!-- Background glow effect -->
@@ -165,8 +165,8 @@
                     @foreach($artists as $artist)
                     <a href="{{ route('user.artist.show', $artist->slug) }}" class="flex flex-col items-center gap-2 shrink-0 group">
                         <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-enzzie-border group-hover:border-enzzie-red transition-all scale-100 group-hover:scale-105 bg-[#1e1e1e]">
-                             @if($artist->avatar)
-                                <img src="{{ asset('storage/'.$artist->avatar) }}" alt="{{ $artist->name }}" class="w-full h-full object-cover">
+                             @if($artist->foto_url)
+                                <img src="{{ $artist->foto_url }}" alt="{{ $artist->name }}" class="w-full h-full object-cover">
                             @else
                                 <div class="w-full h-full flex items-center justify-center text-xs font-bold">{{ strtoupper(substr($artist->name, 0, 2)) }}</div>
                             @endif

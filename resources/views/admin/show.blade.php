@@ -141,7 +141,7 @@
                 @forelse($artist->banners ?? [] as $banner)
                 <div class="banner-slide flex-shrink-0 w-full h-full relative">
                     @if($banner->image)
-                        <img src="{{ asset('storage/' . $banner->image) }}" class="w-full h-full object-cover" alt="{{ $banner->title }}">
+                        <img src="{{ $banner->foto_url }}" class="w-full h-full object-cover" alt="{{ $banner->title }}">
                     @endif
                     <div class="absolute bottom-0 left-0 right-0 px-4 pb-3 pt-8 bg-gradient-to-t from-black/80 to-transparent">
                         <div class="font-syne font-bold text-white text-[0.95rem]">{{ $banner->title }}</div>
@@ -525,8 +525,8 @@
 
         if (result.success) {
             const m = result.merch;
-            const fotoHtml = m.foto
-                ? `<img src="/storage/${m.foto}" class="w-full h-full object-cover block" alt="${m.nama}">`
+            const fotoHtml = m.foto_url
+                ? `<img src="${m.foto_url}" class="w-full h-full object-cover block" alt="${m.nama}">`
                 : '🛍';
 
             const statusClass = m.status === 'ready'

@@ -53,7 +53,7 @@ class ArtistController extends Controller
 {
     $request->validate([
         'name'  => 'required|string|max:100',
-        'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
     ]);
 
     $data = [
@@ -61,8 +61,8 @@ class ArtistController extends Controller
         'slug' => Str::slug($request->name),
     ];
 
-    if ($request->hasFile('avatar')) {
-        $data['avatar'] = $request->file('avatar')->store('artists', 'public');
+    if ($request->hasFile('image')) {
+        $data['image'] = $request->file('image')->store('artists', 'public');
     }
 
     Artist::create($data);
@@ -90,6 +90,7 @@ class ArtistController extends Controller
         if ($request->hasFile('image')) {
             if ($artist->image) Storage::disk('public')->delete($artist->image);
             $data['image'] = $request->file('image')->store('artists', 'public');
+            $data['avatar'] = null; // Clear avatar because image takes precedence
         }
 
         $artist->update($data);

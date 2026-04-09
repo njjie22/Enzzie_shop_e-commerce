@@ -109,8 +109,8 @@
                 @foreach($order->items as $item)
                 <div class="flex items-center gap-3">
                     <div class="w-16 h-16 rounded-xl overflow-hidden bg-enzzie-border flex-shrink-0">
-                        @if($item->gambar)
-                            <img src="{{ asset('storage/'.$item->gambar) }}" alt="{{ $item->nama_produk }}" class="w-full h-full object-cover">
+                        @if($item->foto_url)
+                            <img src="{{ $item->foto_url }}" alt="{{ $item->nama_produk }}" class="w-full h-full object-cover">
                         @else
                             <div class="w-full h-full flex items-center justify-center text-2xl">👕</div>
                         @endif

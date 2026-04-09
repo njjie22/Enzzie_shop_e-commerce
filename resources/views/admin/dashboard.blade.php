@@ -296,7 +296,7 @@
                         {{ $banner->is_active ? 'border-accent' : 'border-transparent hover:border-accent' }}"
                  onclick="openEditBanner({{ $banner->id }}); event.stopPropagation();">
                 @if($banner->image)
-                    <img src="{{ asset('storage/' . $banner->image) }}" alt="{{ $banner->title }}" class="w-full h-full object-cover block">
+                    <img src="{{ $banner->foto_url }}" alt="{{ $banner->title }}" class="w-full h-full object-cover block">
                 @endif
                 <div class="absolute top-1.5 right-1.5 bg-black/55 rounded-md px-1.5 py-1 text-[0.62rem] text-white font-semibold opacity-0 transition-opacity pointer-events-none banner-overlay">✏ Edit</div>
                 <div class="absolute bottom-0 left-0 right-0 pt-6 px-2.5 pb-2 bg-gradient-to-t from-black/75 to-transparent text-[0.68rem] font-semibold text-white">
@@ -329,8 +329,8 @@
                 <div class="artis-chip flex flex-col items-center gap-1.5 cursor-pointer flex-shrink-0"
                      onclick="filterMerch('{{ $artist->slug ?? strtolower(str_replace(' ','-',$artist->name)) }}', this)">
                     <div class="artis-avatar w-[50px] h-[50px] rounded-full border-2 border-border2 overflow-hidden flex items-center justify-center font-bold text-[0.62rem] text-text1 bg-bg3 transition-all duration-200">
-                        @if($artist->avatar)
-                            <img src="{{ asset('storage/' . $artist->avatar) }}" alt="{{ $artist->name }}" class="w-full h-full object-cover block">
+                        @if($artist->foto_url)
+                            <img src="{{ $artist->foto_url }}" alt="{{ $artist->name }}" class="w-full h-full object-cover block">
                         @else
                             {{ strtoupper(substr($artist->name, 0, 3)) }}
                         @endif
@@ -370,8 +370,8 @@
                                 <td class="px-3.5 py-2.5 text-[0.82rem] text-text2 align-middle font-medium text-text1">{{ $artist->name }}</td>
                                <td class="px-3.5 py-2.5 text-[0.82rem] text-text2 align-middle">
                                 <div class="w-[30px] h-[30px] rounded-full overflow-hidden flex items-center justify-center text-[0.6rem] font-bold bg-bg3">
-                                    @if($artist->avatar || $artist->image)
-                                        <img src="{{ asset('storage/' . ($artist->avatar ?? $artist->image)) }}" class="w-full h-full object-cover">
+                                    @if($artist->foto_url)
+                                        <img src="{{ $artist->foto_url }}" class="w-full h-full object-cover">
                                     @else
                                         {{ strtoupper(substr($artist->name, 0, 3)) }}
                                     @endif
@@ -381,7 +381,7 @@
                             <td class="px-3.5 py-2.5 text-[0.82rem] text-text2 align-middle">
                                 <div class="flex gap-1.5">
                                     <button
-                                        onclick="openEditArtis({{ $artist->id }},'{{ addslashes($artist->name) }}',{{ ($artist->avatar ?? $artist->image) ? asset('storage/' . ($artist->avatar ?? $artist->image)) : '' }})"
+                                        onclick="openEditArtis({{ $artist->id }},'{{ addslashes($artist->name) }}','{{ $artist->foto_url ?? '' }}')"
                                         class="inline-flex items-center px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold bg-bg4 text-text2 border border-border2 hover:bg-border2 hover:text-text1 transition-all duration-150 cursor-pointer">✏ Edit</button>
                                     <button
                                         onclick="hapusArtis({{ $artist->id }}, '{{ addslashes($artist->name) }}')"
@@ -406,7 +406,7 @@
                  onclick="openEditMerch({{ $merch->id }})">
                 <div class="w-full aspect-square bg-bg3 flex items-center justify-center text-muted text-3xl overflow-hidden">
                     @if($merch->foto)
-                        <img src="{{ asset('storage/' . $merch->foto) }}" alt="{{ $merch->nama }}" class="w-full h-full object-cover block">
+                        <img src="{{ $merch->foto_url }}" alt="{{ $merch->nama }}" class="w-full h-full object-cover block">
                     @else
                         🛍
                     @endif

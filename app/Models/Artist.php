@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 class Artist extends Model
 {
     protected $fillable = ['name', 'slug', 'avatar', 'image'];
+    protected $appends = ['foto_url'];
 
     protected static function boot()
     {
@@ -33,5 +34,11 @@ class Artist extends Model
     public function getPhotoAttribute()
     {
         return $this->avatar ?? $this->image;
+    }
+
+    public function getFotoUrlAttribute()
+    {
+        $path = $this->avatar ?? $this->image;
+        return $path ? asset('storage/' . $path) : null;
     }
 }

@@ -104,8 +104,8 @@
                         <td class="px-4 py-3">
                             <div class="flex items-center gap-3">
                                 <div class="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-enzzie-border" style="background-color: #1e1e1e">
-                                    @if($artist->avatar || $artist->image)
-                                        <img src="{{ asset('storage/' . ($artist->avatar ?? $artist->image)) }}" class="w-full h-full object-cover">
+                                    @if($artist->foto_url)
+                                        <img src="{{ $artist->foto_url }}" class="w-full h-full object-cover">
                                     @else
                                         {{ strtoupper(substr($artist->name, 0, 3)) }}
                                     @endif
@@ -231,7 +231,7 @@
                             </div>
                             @if($banner->image)
                             <div class="absolute right-0 bottom-0 h-full w-2/3 pointer-events-none z-0">
-                                <img src="{{ asset('storage/' . $banner->image) }}" alt="{{ $banner->title }}"
+                                <img src="{{ $banner->foto_url }}" alt="{{ $banner->title }}"
                                      class="absolute right-0 bottom-0 h-36 w-auto object-contain">
                                 <div class="absolute inset-0" style="background: linear-gradient(to right, {{ $banner->bg_color ?? '#E8001E' }} 0%, {{ $banner->bg_color ?? '#E8001E' }}cc 30%, {{ $banner->bg_color ?? '#E8001E' }}55 55%, {{ $banner->bg_color ?? '#E8001E' }}00 100%);"></div>
                             </div>
@@ -262,8 +262,8 @@
                         @foreach($artists as $artist)
                         <button onclick="filterMerch('{{ $artist->id }}')" class="artist-pill flex flex-col items-center gap-1 flex-shrink-0 group">
                             <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-enzzie-border group-hover:border-white/40 transition-colors" style="background-color: #1e1e1e">
-                                @if($artist->avatar || $artist->image)
-                                    <img src="{{ asset('storage/' . ($artist->avatar ?? $artist->image)) }}">
+                                @if($artist->foto_url)
+                                    <img src="{{ $artist->foto_url }}">
                                 @else
                                     {{ strtoupper(substr($artist->name, 0, 2)) }}
                                 @endif

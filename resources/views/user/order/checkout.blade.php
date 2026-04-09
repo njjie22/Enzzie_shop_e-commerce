@@ -79,7 +79,7 @@
                     <div class="flex items-center gap-3">
                         <div class="w-16 h-16 rounded-xl overflow-hidden bg-enzzie-border flex-shrink-0">
                             @if($item['merch']->foto)
-                                <img src="{{ asset('storage/'.$item['merch']->foto) }}" alt="{{ $item['merch']->nama }}" class="w-full h-full object-cover">
+                                <img src="{{ $item['merch']->foto_url }}" alt="{{ $item['merch']->nama }}" class="w-full h-full object-cover">
                             @else
                                 <div class="w-full h-full flex items-center justify-center text-2xl">👕</div>
                             @endif

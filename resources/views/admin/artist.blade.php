@@ -214,10 +214,10 @@
                 @foreach($artists as $artist)
                 <div class="group bg-[#18181f] border border-[#2e2e38] rounded-[14px] overflow-hidden transition-all hover:border-[#c0392b] hover:-translate-y-0.5" id="card-{{ $artist->id }}">
                     <div class="w-full aspect-square overflow-hidden bg-gradient-to-br from-[#1a0a0a] to-[#0d0d10] flex items-center justify-center relative cursor-pointer" onclick="location.href='{{ route('admin.artist.show', $artist->slug) }}'">
-                        @if($artist->image)
-                            <img src="{{ asset('storage/'.$artist->image) }}" alt="{{ $artist->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        @if($artist->foto_url)
+                            <img src="{{ $artist->foto_url }}" alt="{{ $artist->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                         @elseif($artist->avatar)
-                            <img src="{{ asset('storage/'.$artist->avatar) }}" alt="{{ $artist->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                            <img src="{{ $artist->foto_url }}" alt="{{ $artist->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                         @else
                             <div class="font-['Syne'] text-5xl font-extrabold text-white/15">{{ strtoupper(substr($artist->name, 0, 2)) }}</div>
                         @endif
@@ -227,7 +227,7 @@
                         <div class="text-[0.74rem] text-[#7a7a8c] mb-3 truncate">{{ $artist->slug }}</div>
                         <div class="flex gap-1.5 card-actions">
                             <a href="{{ route('admin.artist.show', $artist->slug) }}" class="btn-detail flex-1 flex items-center justify-center py-1.5 bg-[#222228] border border-[#2e2e38] text-[#cccccc] text-[0.75rem] font-semibold rounded-lg hover:border-[#c0392b] hover:text-[#c0392b] transition-all">Detail</a>
-                            <button class="btn-edit px-3 py-1.5 bg-transparent border border-[#2e2e38] text-[#7a7a8c] text-[0.75rem] font-semibold rounded-lg hover:border-[#c0392b] hover:text-[#c0392b] transition-all" onclick="editArtist({{ $artist->id }}, '{{ $artist->name }}', '{{ $artist->image ? asset('storage/'.$artist->image) : ($artist->avatar ? asset('storage/'.$artist->avatar) : '') }}')">Edit</button>
+                            <button class="btn-edit px-3 py-1.5 bg-transparent border border-[#2e2e38] text-[#7a7a8c] text-[0.75rem] font-semibold rounded-lg hover:border-[#c0392b] hover:text-[#c0392b] transition-all" onclick="editArtist({{ $artist->id }}, '{{ $artist->name }}', '{{ $artist->foto_url ?? '' }}')">Edit</button>
                             <button class="btn-del px-3 py-1.5 bg-transparent border border-red-500/40 text-red-500 text-[0.75rem] font-semibold rounded-lg hover:bg-red-500/10 transition-all font-['DM_Sans']" onclick="deleteArtist({{ $artist->id }})">Hapus</button>
                         </div>
                     </div>

@@ -8,7 +8,7 @@
     <div class="banner-card" style="background: var(--bg2); border: 1px solid var(--border); border-radius: 15px; overflow: hidden; position: relative;">
         <div class="banner-img-wrapper" style="aspect-ratio: 16/9; background: #222;">
             @if($banner->image)
-                <img src="{{ asset('storage/' . $banner->image) }}" alt="{{ $banner->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                <img src="{{ $banner->foto_url }}" alt="{{ $banner->title }}" style="width: 100%; height: 100%; object-fit: cover;">
             @else
                 <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--muted);">Tidak ada gambar</div>
             @endif
