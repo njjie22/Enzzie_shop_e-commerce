@@ -26,7 +26,7 @@ class UserMoreController extends Controller
 
         $artists = $artistsQuery->orderBy('name')->get();
 
-        $allArtists = Artist::orderBy('name')->get(['id', 'name', 'slug', 'image']);
+        $allArtists = Artist::orderBy('name')->get(['id', 'name', 'slug', 'avatar', 'image']);
 
         $banners = Banner::with('artist')->where('is_active', true)->latest()->get();
 
@@ -37,7 +37,7 @@ class UserMoreController extends Controller
     {
         $artist = Artist::findOrFail($id);
 
-        $allArtists = Artist::orderBy('name')->get(['id', 'name', 'slug', 'image']);
+        $allArtists = Artist::orderBy('name')->get(['id', 'name', 'slug', 'avatar', 'image']);
 
         $banners = Banner::where('artist_id', $artist->id)
             ->where('is_active', true)
