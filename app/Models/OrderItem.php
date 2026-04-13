@@ -11,10 +11,12 @@ class OrderItem extends Model
 
     protected $fillable = [
         'order_id',
+        'merch_id',
         'nama_produk',
         'gambar',
         'qty',
         'harga_satuan',
+        'subtotal',
     ];
 
     /**
@@ -23,6 +25,14 @@ class OrderItem extends Model
     public function order()
     {
         return $this->belongsTo(Order::class);
+    }
+
+    /**
+     * Relasi ke Merch
+     */
+    public function merch()
+    {
+        return $this->belongsTo(Merch::class);
     }
 
     /**
